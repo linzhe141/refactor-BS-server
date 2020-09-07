@@ -3,15 +3,13 @@ var sequelize = require('../../config/sequelize.config')
 var Sequelize = require('sequelize')
 var Op = Sequelize.Op
 class UserService{
-    async create({username, password,permissions}){
+    async create({username, password, permissions}){
         if(username && password && permissions){
             let result
             try {
                 result = await user.create({username,password,permissions})
             }catch(error){
-                console.log('error-->')
-                console.log(error)
-                console.log('<---------')
+                console.log('error-->',error)
             }
             return result
         }
@@ -54,7 +52,40 @@ class UserService{
         try {
             result = await this.find({username, password})
         } catch (error) {
-            console.log('error--1>',error)
+            console.log('error-->',error)
+        }
+        return result
+    }
+
+    async delete({username}){
+        let result 
+        try {
+            result = await user.destroy({
+                where: {
+                    username
+                }
+            })
+        } catch (error) {
+            console.log('error--',error)
+        }
+        return result
+    }
+
+    async update({username,password, permissions}){
+        console.log('------>',username,password,permissions)
+        let result
+        try{
+            result = await user.update({
+                password:password,
+                permissions:permissions
+            },
+            {
+                where: {
+                    username: username,
+                }
+            })
+        } catch (error) {
+            console.log('error--',error)
         }
         return result
     }

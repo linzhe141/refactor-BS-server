@@ -10,6 +10,8 @@ class UserController{
         router.get('/userList',this.userList)
         router.post('/login',this.login)
         router.get('/:username',this.find)
+        router.delete('/',this.deleteUser)
+        router.put('/',this.updateUser)
         return router
     }
 
@@ -38,6 +40,18 @@ class UserController{
         permissions = permissions || ''
         console.log('------>',username,password,permissions)
         const result = await this.userService.find({username, password, permissions})
+        res.send({success: true, data: result})
+    }
+
+    deleteUser = async (req, res)=>{
+        let {username} = req.body
+        const result = await this.userService.delete({username})
+        res.send({success: true, data: result})
+    }
+
+    updateUser = async (req, res)=>{
+        let {username, password,permissions} = req.body
+        const result = await this.userService.update({username,password,permissions})
         res.send({success: true, data: result})
     }
 }
