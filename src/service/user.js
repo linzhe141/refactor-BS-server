@@ -30,11 +30,6 @@ class UserService{
                     permissions: { [Op.like]: `%${permissions /* ? permissions: null */}%`},
                 }
                 result = await user.findAll({
-                    // where: sequeselize.and(
-                    //     username ? `username = ${username}` : null,
-                    //     password ? `password = ${password}` : null,
-                    //     permissions ? `permissions = ${permissions}` : null,
-                    // ),
                     where: params
                 })
             } catch (error) {
