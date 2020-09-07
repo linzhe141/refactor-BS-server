@@ -1,15 +1,17 @@
 // tablename为pet
 var Sequelize = require('sequelize')
 var sequelize = require('../../config/sequelize.config')
-var user = sequelize.define('users', {
-    username: {
+var student = sequelize.define('students', {
+    stuID: {
         type: Sequelize.STRING(50),
         primaryKey: true
     },
-    password: Sequelize.STRING(50),
-    permissions: Sequelize.BIGINT(50),
+    stuName: Sequelize.STRING(50),
+    stuAge: Sequelize.BIGINT(50),
+    stuGender: Sequelize.STRING(50),
+    classID: Sequelize.BIGINT(50),
 }, {
     timestamps: false,
     raw: true,
 });
-module.exports = user
+module.exports = student

@@ -37,7 +37,7 @@ class UserService{
         return result
     }
 
-    async findAll({username, password}){
+    async findAll(){
         let result
         try {
             result = await user.findAll()
