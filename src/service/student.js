@@ -3,7 +3,15 @@ var sequelize = require('../../config/sequelize.config')
 var Sequelize = require('sequelize')
 var Op = Sequelize.Op
 class StudentService{
-    
+    async findAll(){
+        let result
+        try {
+            result = await student.findAll()
+        } catch(error){
+            console.log('error-->',error)
+        }
+        return result
+    }
 }
 
 // 单例模式
