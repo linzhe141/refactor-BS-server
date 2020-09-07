@@ -1,6 +1,7 @@
 var user = require('../model/user')
 var sequelize = require('../../config/sequelize.config')
-
+var Sequelize = require('sequelize')
+var Op = Sequelize.Op
 class UserService{
     async create({username, password,permissions}){
         if(username && password && permissions){
@@ -20,15 +21,24 @@ class UserService{
         let result
         if(username || password || permissions){
             try {
+                console.log('username--->', username)
+                console.log('password--->', password)
+                console.log('permissions--->', permissions)
+                var params = {
+                    username: { [Op.like]: `%${username /* ? username: null */}%`},
+                    password: { [Op.like]: `%${password/* ? password: null */}%`},
+                    permissions: { [Op.like]: `%${permissions /* ? permissions: null */}%`},
+                }
                 result = await user.findAll({
-                    where: sequelize.and(
-                        username ? `username = ${username}` : null,
-                        password ? `password = ${password}` : null,
-                        permissions ? `permissions = ${permissions}` : null,
-                    )
+                    // where: sequeselize.and(
+                    //     username ? `username = ${username}` : null,
+                    //     password ? `password = ${password}` : null,
+                    //     permissions ? `permissions = ${permissions}` : null,
+                    // ),
+                    where: params
                 })
             } catch (error) {
-                console.log('error-->',error)
+                console.log('error--22>',error)
             }
         }
         return result
@@ -44,8 +54,14 @@ class UserService{
         return result
     }
 
-    async adminLogin(){
-        le
+    async adminLogin({username, password}){
+        let result 
+        try {
+            result = await this.find({username, password})
+        } catch (error) {
+            console.log('error--1>',error)
+        }
+        return result
     }
 }
 
