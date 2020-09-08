@@ -12,6 +12,20 @@ class StudentService{
         }
         return result
     }
+
+    async create({stuID,stuName,stuAge,stuGender,classID}){
+        if(stuID && stuName && stuAge && stuGender　&& classID){
+            console.log(stuID,stuName,stuAge,stuGender,classID)
+            let result
+            try { 
+                result = await student.create({stuID,stuName,stuAge,stuGender,classID})
+            } catch(error){
+                console.log('error-->',error.errors)
+                return error
+            }
+            return result
+        }
+    }
 }
 
 // 单例模式

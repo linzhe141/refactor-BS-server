@@ -7,12 +7,13 @@ class UserService{
         if(username && password && permissions){
             let result
             try {
+                console.log('create--ueser--->',username, password,permissions)
                 result = await user.create({username,password,permissions})
             }catch(error){
                 console.log('error-->',error)
             }
             return result
-        }
+        } 
     }
 
     async find({username, password,permissions}){
