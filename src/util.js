@@ -24,6 +24,12 @@ class Util{
         return true
     }
 
+    /**
+     * @method generateToken
+     * @for {Util}
+     * @param {string} 使用用户名生成token
+     * @return {string} 表示创建成功的token
+     */
     async generateToken(data){
         let created = Math.floor(Date.now() / 1000)
         let cert = fs.readFileSync(path.join(__dirname, '../config/rsa_private_key.pem'))
@@ -34,6 +40,12 @@ class Util{
         return token
     }
 
+    /**
+     * @method verifyToken
+     * @for {Util}
+     * @param {string} 前端传递过来的token
+     * @return {any} 表示是否验证成功 
+     */
     async verifyToken(token){
         let cert = fs.readFileSync(path.join(__dirname, '../config/rsa_public_key.pem'))
         let res
