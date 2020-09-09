@@ -1,12 +1,15 @@
 const { Router } = require('express')
 const userService = require('../service/user')
+const util = require('../util')
 
 class UserController{
     // userService
     async init(){
         this.userService = await userService()
+        this.util = await util()
+
         const router = Router()
-        router.post('/createUser',this.createUser)
+        router.post('/',this.createUser)
         router.get('/userList',this.userList)
         router.post('/login',this.login)
         router.get('/:username',this.find)
@@ -17,8 +20,16 @@ class UserController{
 
     createUser = async (req, res) => {
         const {username, password, permissions} = req.body
-        const newUser = await this.userService.create({username, password, permissions})
-        res.send({success: true, data: newUser})
+        const validation = await this.util.validaRequiredFields({username, password, permissions})
+        if(validation !== true){
+            return res.send(validation)
+        }
+        let newUser = await this.userService.create({username, password, permissions})
+        console.log(newUser)
+        if(newUser.errors) {
+            return res.send({success: false, error: newUser.errors})
+        }
+        return res.send({success: true, data: newUser})
     }
 
     userList = async(req, res) => {
@@ -29,7 +40,10 @@ class UserController{
     login = async(req, res) => {
         const {username,password} = req.body
         const result = await this.userService.adminLogin({username, password})
-        res.send({success: true, data: userList})
+
+        let token = await this.util.generateToken(username)
+        console.log('token-->',token)
+        res.send({success: true, data: result, token: token})
     }
 
     find = async(req, res) => {

@@ -9,7 +9,8 @@ class UserService{
             try {
                 result = await user.create({username,password,permissions})
             }catch(error){
-                console.log('error-->',error)
+                console.log('error--1231',error)
+                return error
             }
             return result
         } 
