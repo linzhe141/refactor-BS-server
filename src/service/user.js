@@ -7,7 +7,6 @@ class UserService{
         if(username && password && permissions){
             let result
             try {
-                console.log('create--ueser--->',username, password,permissions)
                 result = await user.create({username,password,permissions})
             }catch(error){
                 console.log('error-->',error)
@@ -20,19 +19,16 @@ class UserService{
         let result
         if(username || password || permissions){
             try {
-                console.log('username--->', username)
-                console.log('password--->', password)
-                console.log('permissions--->', permissions)
                 var params = {
                     username: { [Op.like]: `%${username /* ? username: null */}%`},
-                    password: { [Op.like]: `%${password/* ? password: null */}%`},
+                    password: { [Op.like]: `%${password /* ? password: null */}%`},
                     permissions: { [Op.like]: `%${permissions /* ? permissions: null */}%`},
                 }
                 result = await user.findAll({
                     where: params
                 })
             } catch (error) {
-                console.log('error--22>',error)
+                console.log('error-->',error)
             }
         }
         return result
@@ -73,7 +69,6 @@ class UserService{
     }
 
     async update({username,password, permissions}){
-        console.log('------>',username,password,permissions)
         let result
         try{
             result = await user.update({

@@ -28,7 +28,6 @@ class UserController{
 
     login = async(req, res) => {
         const {username,password} = req.body
-        console.log('login---->data',username,password)
         const result = await this.userService.adminLogin({username, password})
         res.send({success: true, data: userList})
     }
@@ -38,7 +37,6 @@ class UserController{
         username = username || ''
         password = password || ''
         permissions = permissions || ''
-        console.log('------>',username,password,permissions)
         const result = await this.userService.find({username, password, permissions})
         res.send({success: true, data: result})
     }
