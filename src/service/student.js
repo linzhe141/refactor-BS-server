@@ -45,6 +45,21 @@ class StudentService{
             return result
         }
     }
+
+    async update({stuID,stuName,stuAge,stuGender,classID}){
+        let result
+        try {
+            result = await student.update({
+                stuName,stuAge,stuGender,classID
+            },
+            {
+                where: {stuID}
+            })
+        } catch (error) {
+            return error
+        }
+        return result
+    }
 }
 
 // 单例模式

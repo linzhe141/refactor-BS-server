@@ -13,6 +13,7 @@ class StudentController{
         router.get('/studentList',this.studentList)
         router.post('/',this.createStudent)
         router.get('/',this.find)
+        router.put('/:stuID',this.updateStudent)
         
         return router
     }
@@ -31,7 +32,7 @@ class StudentController{
         
         const newStudent = await this.studentService.create({stuID,stuName,stuAge,stuGender,classID})
         if(newStudent.errors){
-            return res.send({success: false, error: newStudent.errors})
+            return res.send({success: false, error: newStudent.errors}) 
         }
         const username = stuID
         const password = stuID
@@ -52,6 +53,21 @@ class StudentController{
             return res.send({success: false, error: result.errors})
         }
         return res.send({success: true, data: result})
+    }
+
+    updateStudent = async(req, res) => {
+        let {stuID} = req.params
+        let {stuName,stuAge,stuGender,classID} = req.body
+        const validation = await this.util.validaRequiredFields({stuID,stuName,stuAge,stuGender,classID})
+        if(validation !== true){
+            return res.send(validation)
+        }
+        const result = await this.studentService.update({stuID, stuName, stuAge, stuGender,classID})
+        console.log(result)
+        if(result.length != 1){
+            return res.send({success: false, msg: result})
+        }
+        return res.send({success: true, msg: '更新成功'})
     }
 }
 module.exports = async () => {

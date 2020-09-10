@@ -9,10 +9,11 @@ class Util{
      * @return {Boolean} ture表示通过，否则返回那些字段未填写
      */
     async validaRequiredFields(fieldsObj){
+        console.log(fieldsObj)
         const params = fieldsObj
         const requiredFields = []
         for (const iterator in params) {
-            if(params[iterator] == '') {
+            if(params[iterator] == '' || params[iterator] == undefined) {
                 requiredFields.push(iterator)
             }
         }
