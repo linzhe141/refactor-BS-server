@@ -14,7 +14,7 @@ class UserController{
         router.post('/login',this.login)
         router.get('/:username',this.find)
         router.delete('/',this.deleteUser)
-        router.put('/',this.updateUser)
+        router.put('/:username',this.updateUser)
         return router
     }
 
@@ -62,9 +62,17 @@ class UserController{
     }
 
     updateUser = async (req, res)=>{
-        let {username, password,permissions} = req.body
+        let {username} = req.params
+        let {password,permissions} = req.body
+        const validation = await this.util.validaRequiredFields({username, password,permissions})
+        if(validation !== true){
+            return res.send(validation)
+        }
         const result = await this.userService.update({username,password,permissions})
-        res.send({success: true, data: result})
+        if(result.length != 1){
+            return res.send({success: false, data: result})
+        }
+        return res.send({success: true, data: result})
     }
 }
 module.exports = async () => {
