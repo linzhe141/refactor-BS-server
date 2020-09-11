@@ -19,6 +19,9 @@ class UserService{
     async find({username, password,permissions}){
         let result
         if(username || password || permissions){
+            username = username || ''
+            password = password || ''
+            permissions = permissions || ''
             try {
                 var params = {
                     username: { [Op.like]: `%${username /* ? username: null */}%`},
@@ -30,6 +33,7 @@ class UserService{
                 })
             } catch (error) {
                 console.log('error-->',error)
+                return error
             }
         }
         return result
@@ -41,16 +45,19 @@ class UserService{
             result = await user.findAll()
         } catch(error){
             console.log('error-->',error)
+            return error
         }
         return result
     }
 
     async adminLogin({username, password}){
+        console.log('login',username,password)
         let result 
         try {
             result = await this.find({username, password})
         } catch (error) {
             console.log('error-->',error)
+            return error
         }
         return result
     }
@@ -65,6 +72,7 @@ class UserService{
             })
         } catch (error) {
             console.log('error--',error)
+            return error
         }
         return result
     }
