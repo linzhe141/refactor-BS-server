@@ -14,6 +14,7 @@ class StudentController{
         router.post('/',this.createStudent)
         router.get('/',this.find)
         router.put('/:stuID',this.updateStudent)
+        router.delete('/:stuID',this.deleteStudent)
         
         return router
     }
@@ -24,31 +25,33 @@ class StudentController{
     }
 
     createStudent = async(req, res) => {
-        const {stuID,stuName,stuAge,stuGender,classID} = req.body
-        const validation = await this.util.validaRequiredFields({stuID,stuName,stuAge,stuGender,classID})
+        const {stuID,stuName,stuAge,stuGender/* ,classID */} = req.body
+        const validation = await this.util.validaRequiredFields({stuID,stuName,stuAge,stuGender/* ,classID */})
         if(validation !== true){
             return res.send(validation)
-        }
-        
-        const newStudent = await this.studentService.create({stuID,stuName,stuAge,stuGender,classID})
-        if(newStudent.errors){
-            return res.send({success: false, error: newStudent.errors}) 
         }
         const username = stuID
         const password = stuID
         const permissions = 2
         const newUser = await this.userService.create({username, password, permissions})
+        
+        const newStudent = await newUser.createStudent({stuID,stuName,stuAge,stuGender/* ,classID */})
+        if(newStudent.errors){
+            return res.send({success: false, error: newStudent.errors}) 
+        }
+        
         return res.send({success: true, data: newStudent})
     }
 
     find = async(req, res) => {
-        let {stuID,stuName,stuAge,stuGender,classID} = req.query
+        let {stuID,stuName,stuAge,stuGender/* ,classID */} = req.query
         stuID = stuID || ''
         stuName = stuName || ''
         stuAge = stuAge || ''
         stuGender = stuGender || ''
-        classID = classID || ''
-        const result = await this.studentService.find({stuID, stuName, stuAge, stuGender,classID})
+       /*  classID = classID || '' */
+        const result = await this.studentService.find({stuID, stuName, stuAge, stuGender/* ,classID */})
+        console.log(result)
         if(result.errors){
             return res.send({success: false, error: result.errors})
         }
@@ -68,6 +71,21 @@ class StudentController{
             return res.send({success: false, msg: result})
         }
         return res.send({success: true, msg: '更新成功'})
+    }
+
+    deleteStudent = async(req, res) => {
+        const {stuID} = req.params
+        console.log(stuID)
+        const student = await this.studentService.find({stuID})
+        if(student.length){
+            const userid = student[0].userId
+            const studentid = student[0].id
+            const deleteuser = await this.userService.deleteById({id:userid})
+            const deletestudent = await this.studentService.deleteById({id: studentid})
+            res.send({success: true, data: deletestudent})
+        } else {
+            res.send({success: false, msg: '已删除'})
+        }
     }
 }
 module.exports = async () => {

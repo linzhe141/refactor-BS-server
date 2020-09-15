@@ -1,4 +1,4 @@
-var user = require('../model/user')
+var User = require('../model/user')
 var sequelize = require('../../config/sequelize.config')
 var Sequelize = require('sequelize')
 var Op = Sequelize.Op
@@ -7,7 +7,7 @@ class UserService{
         if(username && password && permissions){
             let result
             try {
-                result = await user.create({username,password,permissions})
+                result = await User.create({username,password,permissions})
             }catch(error){
                 console.log('error--1231',error)
                 return error
@@ -19,17 +19,21 @@ class UserService{
     async find({username, password,permissions}){
         let result
         if(username || password || permissions){
+            username = username || ''
+            password = password || ''
+            permissions = permissions || ''
             try {
                 var params = {
                     username: { [Op.like]: `%${username /* ? username: null */}%`},
                     password: { [Op.like]: `%${password /* ? password: null */}%`},
                     permissions: { [Op.like]: `%${permissions /* ? permissions: null */}%`},
                 }
-                result = await user.findAll({
+                result = await User.findAll({
                     where: params
                 })
             } catch (error) {
                 console.log('error-->',error)
+                return error
             }
         }
         return result
@@ -38,19 +42,22 @@ class UserService{
     async findAll(){
         let result
         try {
-            result = await user.findAll()
+            result = await User.findAll()
         } catch(error){
             console.log('error-->',error)
+            return error
         }
         return result
     }
 
     async adminLogin({username, password}){
+        console.log('login',username,password)
         let result 
         try {
             result = await this.find({username, password})
         } catch (error) {
             console.log('error-->',error)
+            return error
         }
         return result
     }
@@ -58,13 +65,29 @@ class UserService{
     async delete({username}){
         let result 
         try {
-            result = await user.destroy({
+            result = await User.destroy({
                 where: {
                     username
                 }
             })
         } catch (error) {
             console.log('error--',error)
+            return error
+        }
+        return result
+    }
+
+    async deleteById({id}){
+        let result 
+        try {
+            result = await User.destroy({
+                where: {
+                    id
+                }
+            })
+        } catch (error) {
+            console.log('error--',error)
+            return error
         }
         return result
     }
@@ -72,7 +95,7 @@ class UserService{
     async update({username,password, permissions}){
         let result
         try{
-            result = await user.update({
+            result = await User.update({
                 password:password,
                 permissions:permissions
             },

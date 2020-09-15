@@ -39,11 +39,16 @@ class UserController{
 
     login = async(req, res) => {
         const {username,password} = req.body
+        const validation = await this.util.validaRequiredFields({username, password})
+        if(validation !== true){
+            return res.send(validation)
+        }
         const result = await this.userService.adminLogin({username, password})
-
+        if(result.length == 0){
+            return res.send({success: false, msg: '账号或者密码错误'})
+        }
         let token = await this.util.generateToken(username)
-        console.log('token-->',token)
-        res.send({success: true, data: result, token: token})
+        return res.send({success: true, data: result, token: token})
     }
 
     find = async(req, res) => {
