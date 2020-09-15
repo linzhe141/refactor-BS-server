@@ -82,7 +82,7 @@ class UserService{
                 }
             })
         } catch (error) {
-            console.log('error--',error)
+            return error
         }
         return result
     }
