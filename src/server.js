@@ -9,7 +9,7 @@ server.use(bodyParser.urlencoded({extended: false}));
 const port = parseInt(process.env.PORT || 9000)
 
 //加载主外键关系及创建数据库
-require('./controller/ref');
+require('./model/ref');
 
 async function serverStart(){
     server.use(await initControllers());
