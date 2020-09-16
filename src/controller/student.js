@@ -18,7 +18,11 @@ class StudentController{
         
         return router
     }
-
+    /**
+     * 用户登录
+     * @route POST /api/student/studentList
+     * @group student - Operations about student
+     */
     studentList = async(req, res) => {
         const studentList = await this.studentService.findAll()
         return res.send({success: true, data: studentList})

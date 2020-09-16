@@ -37,6 +37,13 @@ class UserController{
         res.send({success: true, data: userList})
     }
 
+    /**
+     * 用户登录
+     * @route POST /api/user/login
+     * @group user - Operations about user
+     * @param {string} username.query.required - 请输入用户名
+     * @param {number} password.query.required - 请输入密码
+     */
     login = async(req, res) => {
         const {username,password} = req.body
         const validation = await this.util.validaRequiredFields({username, password})
