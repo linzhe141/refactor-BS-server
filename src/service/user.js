@@ -62,12 +62,12 @@ class UserService{
         return result
     }
 
-    async delete({username}){
+    async delete({id}){
         let result 
         try {
             result = await User.destroy({
                 where: {
-                    username
+                    id
                 }
             })
         } catch (error) {
@@ -92,16 +92,17 @@ class UserService{
         return result
     }
 
-    async update({username,password, permissions}){
+    async update({id,username,password, permissions}){
         let result
         try{
             result = await User.update({
+                username: username,
                 password:password,
-                permissions:permissions
+                permissions:permissions,
             },
             {
                 where: {
-                    username: username,
+                    id: id,
                 }
             })
         } catch (error) {

@@ -35,4 +35,4 @@ Teacher.belongsToMany(Classgrade,{
  
   
 
-sequelize.sync({force: true})      
+// sequelize.sync({force: true})      
