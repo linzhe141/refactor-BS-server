@@ -13,21 +13,33 @@ class StudentController{
         router.get('/studentList',this.studentList)
         router.post('/',this.createStudent)
         router.get('/',this.find)
-        router.put('/:stuID',this.updateStudent)
-        router.delete('/:stuID',this.deleteStudent)
+        router.put('/',this.updateStudent)
+        router.delete('/',this.deleteStudent)
         
         return router
     }
+    
     /**
-     * 用户登录
-     * @route POST /api/student/studentList
-     * @group student - Operations about student
+     * 获取所有学生
+     * @route GET /api/student/studentList
+     * @summary 获取所有学生
+     * @group student - 学生管理模块
      */
     studentList = async(req, res) => {
         const studentList = await this.studentService.findAll()
         return res.send({success: true, data: studentList})
     }
 
+    /**
+     * 创建学生
+     * @route POST /api/student/
+     * @summary 创建学生
+     * @group student - 学生管理模块
+     * @param {string} stuID.formData - 请输入学生编号
+     * @param {string} stuName.formData - 请输入学生姓名
+     * @param {string} stuAge.formData - 请输入学生年龄
+     * @param {string} stuGender.formData - 请输入学生性别
+     */
     createStudent = async(req, res) => {
         const {stuID,stuName,stuAge,stuGender/* ,classID */} = req.body
         const validation = await this.util.validaRequiredFields({stuID,stuName,stuAge,stuGender/* ,classID */})
@@ -47,6 +59,16 @@ class StudentController{
         return res.send({success: true, data: newStudent})
     }
 
+    /**
+     * 查找学生
+     * @route GET /api/student/
+     * @summary 查找学生
+     * @group student - 学生管理模块
+     * @param {string} stuID.query - 请输入学号
+     * @param {string} stuName.query - 请输入姓名
+     * @param {string} stuAge.query - 请输入年龄
+     * @param {string} stuGender.query - 请输入性别
+     */
     find = async(req, res) => {
         let {stuID,stuName,stuAge,stuGender/* ,classID */} = req.query
         stuID = stuID || ''
@@ -62,25 +84,40 @@ class StudentController{
         return res.send({success: true, data: result})
     }
 
+    /**
+     * 更新学生
+     * @route PUT /api/student/
+     * @summary 更新学生
+     * @group student - 学生管理模块
+     * @param {string} id.formData - 请输入id
+     * @param {string} stuID.formData - 请输入学号
+     * @param {string} stuName.formData - 请输入姓名
+     * @param {string} stuAge.formData - 请输入年龄
+     * @param {string} stuGender.formData - 请输入性别
+     */
     updateStudent = async(req, res) => {
-        let {stuID} = req.params
-        let {stuName,stuAge,stuGender,classID} = req.body
-        const validation = await this.util.validaRequiredFields({stuID,stuName,stuAge,stuGender,classID})
+        let {id,stuID,stuName,stuAge,stuGender/* ,classID */} = req.body
+        const validation = await this.util.validaRequiredFields({id,stuID,stuName,stuAge,stuGender/* ,classID */})
         if(validation !== true){
             return res.send(validation)
         }
-        const result = await this.studentService.update({stuID, stuName, stuAge, stuGender,classID})
-        console.log(result)
+        const result = await this.studentService.update({id, stuID, stuName, stuAge, stuGender/* ,classID */})
         if(result.length != 1){
             return res.send({success: false, msg: result})
         }
         return res.send({success: true, msg: '更新成功'})
     }
 
+    /**
+     * 删除学生
+     * @route DELETE /api/student/
+     * @summary 删除学生
+     * @group student - 学生管理模块
+     * @param {string} id.formData - 请输入id
+     */
     deleteStudent = async(req, res) => {
-        const {stuID} = req.params
-        console.log(stuID)
-        const student = await this.studentService.find({stuID})
+        const {id} = req.body
+        const student = await this.studentService.find({id})
         if(student.length){
             const userid = student[0].userId
             const studentid = student[0].id

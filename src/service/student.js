@@ -9,6 +9,7 @@ class StudentService{
             result = await student.findAll()
         } catch(error){
             console.log('error-->',error)
+            return error
         }
         return result
     }
@@ -25,15 +26,17 @@ class StudentService{
         }
     }
 
-    async find({stuID,stuName,stuAge,stuGender/* ,classID */}){
+    async find({id,stuID,stuName,stuAge,stuGender/* ,classID */}){
         let result
-        if(stuID || stuName || stuAge || stuGender /* || classID */){
+        if(id || stuID || stuName || stuAge || stuGender /* || classID */){
+            id = id || ''
             stuID = stuID || ''
             stuName = stuName || ''
             stuAge = stuAge || ''
             stuGender = stuGender || ''
             try {
                 const params = {
+                    id: {[Op.like]: `%${id}%`},
                     stuID: {[Op.like]: `%${stuID}%`},
                     stuName: {[Op.like]: `%${stuName}%`},
                     stuAge: {[Op.like]: `%${stuAge}%`},
@@ -51,16 +54,16 @@ class StudentService{
         }
     }
 
-    async update({stuID,stuName,stuAge,stuGender/* ,classID */}){
+    async update({id,stuID,stuName,stuAge,stuGender/* ,classID */}){
         let result
         try {
             result = await student.update({
-                stuName,stuAge,stuGender/* ,classID */
+                stuID,stuName,stuAge,stuGender/* ,classID */
             },
             {
-                where: {stuID}
+                where: {id}
             })
-        } catch (error) {
+        } catch (error) {   
             return error
         }
         return result

@@ -41,7 +41,7 @@ class UserController{
         return res.send({success: true, data: newUser})
     }
 
-     /**
+    /**
      * 获取所有用户
      * @route GET /api/user/userList
      * @summary 获取所有用户
