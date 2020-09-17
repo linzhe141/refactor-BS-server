@@ -127,8 +127,8 @@ class UserController{
             const type = user[0].permissions
             if(type == 1 ){
                 const tch = await this.teacherService.find({userId: id})
-                const tch = stu[0].id
-                const deleteteacher = await this.teacherService.deleteById({id:sid})
+                const tid = tch[0].id
+                const deleteteacher = await this.teacherService.deleteById({id:tid})
                 const deleteuser = await this.userService.delete({id})
                 return res.send({success: true, msg: '删除成功'})
             }
