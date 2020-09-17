@@ -95,7 +95,7 @@ class TeacherController{
      * @param {enum} tchGender.formData - 请输入教师性别
      */
     updateTeacher = async(req, res) => {
-        let {id,tchNum,tchName,tchAge,tchGender/* ,classID */} = req.body
+        let {id,tchNum,tchName,tchAge,tchGender/* ,classID */} = req.body 
         const validation = await this.util.validaRequiredFields({id,tchNum,tchName,tchAge,tchGender/* ,classID */})
         if(validation !== true){
             return res.send(validation)
