@@ -53,7 +53,6 @@ class UserService{
     }
 
     async adminLogin({username, password}){
-        console.log('login',username,password)
         let result 
         try {
             result = await this.find({username, password})

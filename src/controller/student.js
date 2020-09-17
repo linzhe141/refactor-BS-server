@@ -77,7 +77,6 @@ class StudentController{
         stuGender = stuGender || ''
        /*  classID = classID || '' */
         const result = await this.studentService.find({stuID, stuName, stuAge, stuGender/* ,classID */})
-        console.log(result)
         if(result.errors){
             return res.send({success: false, error: result.errors})
         }

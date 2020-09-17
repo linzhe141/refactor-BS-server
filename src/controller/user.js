@@ -37,7 +37,6 @@ class UserController{
             return res.send(validation)
         }
         let newUser = await this.userService.create({username, password, permissions})
-        console.log(newUser)
         if(newUser.errors) {
             return res.send({success: false, error: newUser.errors})
         }
@@ -88,7 +87,6 @@ class UserController{
      */
     find = async(req, res) => {
         let {username, password, permissions} = req.query
-        console.log(username, password, permissions)
         username = username || ''
         password = password || ''
         permissions = permissions || ''
@@ -133,7 +131,7 @@ class UserController{
             return res.send({success:false,msg:'该用户已删除'})
         }
     }
-    
+
     /**
      * 更新用户
      * @route PUT /api/user/

@@ -45,7 +45,6 @@ class StudentService{
                     userId: {[Op.like]: `%${userId}%`},
                     /* classID: {[Op.like]: `%${classID}%`} */
                 }
-                console.log(params)
                 result = await student.findAll({
                     where: params
                 })
