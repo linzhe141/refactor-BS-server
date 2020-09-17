@@ -1,6 +1,7 @@
 const { Router } = require('express')
 const userService = require('../service/user')
 const studentService = require('../service/student')
+const teacherService = require('../service/teacher')
 
 const util = require('../util')
 
@@ -9,6 +10,7 @@ class UserController{
     async init(){
         this.userService = await userService()
         this.studentService = await studentService()
+        this.teacherService = await teacherService()
         this.util = await util()
 
         const router = Router()
@@ -122,11 +124,21 @@ class UserController{
             return res.send({success:false,msg:'该用户不可删除'})
         }
         if(user.length){
-            const stu = await this.studentService.find({userId: id})
-            const sid = stu[0].id
-            const deletestudent = await this.studentService.deleteById({id:sid})
-            const deleteuser = await this.userService.delete({id})
-            return res.send({success: true, msg: '删除成功'})
+            const type = user[0].permissions
+            if(type == 1 ){
+                const tch = await this.teacherService.find({userId: id})
+                const tch = stu[0].id
+                const deleteteacher = await this.teacherService.deleteById({id:sid})
+                const deleteuser = await this.userService.delete({id})
+                return res.send({success: true, msg: '删除成功'})
+            }
+            if(type == 2 ){
+                const stu = await this.studentService.find({userId: id})
+                const sid = stu[0].id
+                const deletestudent = await this.studentService.deleteById({id:sid})
+                const deleteuser = await this.userService.delete({id})
+                return res.send({success: true, msg: '删除成功'})
+            }
         }else{
             return res.send({success:false,msg:'该用户已删除'})
         }
