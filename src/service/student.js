@@ -26,14 +26,15 @@ class StudentService{
         }
     }
 
-    async find({id,stuID,stuName,stuAge,stuGender/* ,classID */}){
+    async find({id,stuID,stuName,stuAge,stuGender,userId/* ,classID */}){
         let result
-        if(id || stuID || stuName || stuAge || stuGender /* || classID */){
+        if(id || stuID || stuName || stuAge || stuGender || userId /* || classID */){
             id = id || ''
             stuID = stuID || ''
             stuName = stuName || ''
             stuAge = stuAge || ''
             stuGender = stuGender || ''
+            userId = userId || ''
             try {
                 const params = {
                     id: {[Op.like]: `%${id}%`},
@@ -41,6 +42,7 @@ class StudentService{
                     stuName: {[Op.like]: `%${stuName}%`},
                     stuAge: {[Op.like]: `%${stuAge}%`},
                     stuGender: {[Op.like]: `%${stuGender}%`},
+                    userId: {[Op.like]: `%${userId}%`},
                     /* classID: {[Op.like]: `%${classID}%`} */
                 }
                 console.log(params)

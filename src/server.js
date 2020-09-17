@@ -25,13 +25,17 @@ const accessLogStream = FileStreamRotator.getStream({
     // frequency: 'daily',
     verbose: true
 })
-/*  自定义token
-morgan.token('from', function(req, res){
-    return req.query.from || '-';
-});
- 自定义format，其中包含自定义的token
-morgan.format('joke', '[joke] :method :url :status :from'); 
-var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log')) */
+// 自定义token
+morgan.token('localDate',function getDate(req) {
+    let date = new Date();
+    return date.toLocaleString()
+})
+   
+// 自定义format，其中包含自定义的token
+morgan.format('combined', ':remote-addr - :remote-user [:localDate]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"');
+   
+// 使用自定义的format
+
 server.use(morgan('combined',{stream: accessLogStream}))
 
 const port = parseInt(process.env.PORT || 9000)

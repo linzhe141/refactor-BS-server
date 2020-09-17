@@ -1,11 +1,14 @@
 const { Router } = require('express')
 const userService = require('../service/user')
+const studentService = require('../service/student')
+
 const util = require('../util')
 
 class UserController{
     // userService
     async init(){
         this.userService = await userService()
+        this.studentService = await studentService()
         this.util = await util()
 
         const router = Router()
@@ -114,12 +117,23 @@ class UserController{
      * @group user - 用户模块
      * @param {string} id.formData - 请输入用户id
      */
-    deleteUser = async (req, res)=>{
+    deleteUser = async (req, res)=>{ 
         let {id} = req.body
-        const result = await this.userService.delete({id})
-        res.send({success: true, data: result})
+        const user = await this.userService.find({id})
+        if(id == 1 || id == 2){
+            return res.send({success:false,msg:'该用户不可删除'})
+        }
+        if(user.length){
+            const stu = await this.studentService.find({userId: id})
+            const sid = stu[0].id
+            const deletestudent = await this.studentService.deleteById({id:sid})
+            const deleteuser = await this.userService.delete({id})
+            return res.send({success: true, msg: '删除成功'})
+        }else{
+            return res.send({success:false,msg:'该用户已删除'})
+        }
     }
-
+    
     /**
      * 更新用户
      * @route PUT /api/user/
