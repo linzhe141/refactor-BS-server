@@ -1,4 +1,5 @@
 var Teacher = require('../model/teacher')
+var Classgrade = require('../model/classgrade')
 var sequelize = require('../../config/sequelize.config')
 var Sequelize = require('sequelize')
 var Op = Sequelize.Op
@@ -6,7 +7,11 @@ class TeacherService{
     async findAll(){
         let result
         try {
-            result = await Teacher.findAll()
+            result = await Teacher.findAll({
+                include: {
+                    model: Classgrade
+                }
+            })
         } catch(error){
             console.log('error-->',error)
             return error
