@@ -32,7 +32,7 @@ morgan.token('localDate',function getDate(req) {
 })
    
 // 自定义format，其中包含自定义的token
-morgan.format('combined', ':remote-addr - :remote-user [:localDate]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"');
+morgan.format('combined', '[:localDate] ":method :url" :status   --  ":user-agent"');
    
 // 使用自定义的format
 

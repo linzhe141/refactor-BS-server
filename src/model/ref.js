@@ -35,9 +35,9 @@ Teacher.belongsToMany(Classgrade,{
  
   
 /* 默认创建两个管理员账户 */
-sequelize.sync({force: true}).then(()=>{
-    defaultUser()
-})      
+// sequelize.sync({force: true}).then(()=>{
+//     defaultUser()
+// })      
 const defaultUser = async ()=>{
     await User.create({username: 'root', password: 'linzhe141', permissions: 0})
     await User.create({username: 'admin', password: 'root', permissions: 0})
