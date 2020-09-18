@@ -14,11 +14,11 @@ class StudentService{
         return result
     }
 
-    async create({stuID,stuName,stuAge,stuGender/* ,classID */}){
-        if(stuID && stuName && stuAge && stuGender　/* && classID */){
+    async create({stuID,stuName,stuAge,stuGender, classgradeId}){
+        if(stuID && stuName && stuAge && stuGender　&& classgradeId){
             let result
             try { 
-                result = await student.create({stuID,stuName,stuAge,stuGender/* ,classID */})
+                result = await student.create({stuID,stuName,stuAge,stuGender, classgradeId})
             } catch(error){
                 return error
             }
@@ -26,9 +26,9 @@ class StudentService{
         }
     }
 
-    async find({id,stuID,stuName,stuAge,stuGender,userId/* ,classID */}){
+    async find({id,stuID,stuName,stuAge,stuGender,userId, classgradeId}){
         let result
-        if(id || stuID || stuName || stuAge || stuGender || userId /* || classID */){
+        if(id || stuID || stuName || stuAge || stuGender || userId || classgradeId){
             id = id || ''
             stuID = stuID || ''
             stuName = stuName || ''
@@ -43,7 +43,7 @@ class StudentService{
                     stuAge: {[Op.like]: `%${stuAge}%`},
                     stuGender: {[Op.like]: `%${stuGender}%`},
                     userId: {[Op.like]: `%${userId}%`},
-                    /* classID: {[Op.like]: `%${classID}%`} */
+                    classgradeId: {[Op.like]: `%${classgradeId}%`}
                 }
                 result = await student.findAll({
                     where: params
@@ -55,11 +55,11 @@ class StudentService{
         }
     }
 
-    async update({id,stuID,stuName,stuAge,stuGender/* ,classID */}){
+    async update({id,stuID,stuName,stuAge,stuGender, classgradeId}){
         let result
         try {
             result = await student.update({
-                stuID,stuName,stuAge,stuGender/* ,classID */
+                stuID,stuName,stuAge,stuGender, classgradeId
             },
             {
                 where: {id}

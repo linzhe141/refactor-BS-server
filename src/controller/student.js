@@ -1,11 +1,13 @@
 const { Router } = require('express')
 const userService = require('../service/user')
 const studentService = require('../service/student')
+const classgradeService = require('../service/classgrade')
 var util = require('../util')
 
 class StudentController{
     // studentService
     async init(){
+        this.classgradeService = await classgradeService()
         this.studentService = await studentService()
         this.userService = await userService()
         this.util = await util()
@@ -39,19 +41,24 @@ class StudentController{
      * @param {string} stuName.formData - 请输入学生姓名
      * @param {string} stuAge.formData - 请输入学生年龄
      * @param {enum} stuGender.formData - 请输入学生性别
+     * @param {number} classgradeId.formData - 请输入班级id
      */
     createStudent = async(req, res) => {
-        const {stuID,stuName,stuAge,stuGender/* ,classID */} = req.body
-        const validation = await this.util.validaRequiredFields({stuID,stuName,stuAge,stuGender/* ,classID */})
+        const {stuID,stuName,stuAge,stuGender,classgradeId} = req.body
+        const validation = await this.util.validaRequiredFields({stuID,stuName,stuAge,stuGender,classgradeId})
         if(validation !== true){
             return res.send(validation)
+        }
+        const classgrade = await this.classgradeService.find({id: classgradeId}) 
+        if(classgrade.length == 0){
+            return res.send({success: false, msg: '请先创建班级'})
         }
         const username = stuID
         const password = stuID
         const permissions = 2
         const newUser = await this.userService.create({username, password, permissions})
         
-        const newStudent = await newUser.createStudent({stuID,stuName,stuAge,stuGender/* ,classID */})
+        const newStudent = await newUser.createStudent({stuID,stuName,stuAge,stuGender,classgradeId})
         if(newStudent.errors){
             return res.send({success: false, error: newStudent.errors}) 
         }
@@ -68,15 +75,16 @@ class StudentController{
      * @param {string} stuName.query - 请输入姓名
      * @param {string} stuAge.query - 请输入年龄
      * @param {string} stuGender.query - 请输入性别
+     * @param {number} classgradeId.query - 请输入班级id
      */
     find = async(req, res) => {
-        let {stuID,stuName,stuAge,stuGender/* ,classID */} = req.query
+        let {stuID,stuName,stuAge,stuGender,classgradeId} = req.query
         stuID = stuID || ''
         stuName = stuName || ''
         stuAge = stuAge || ''
         stuGender = stuGender || ''
-       /*  classID = classID || '' */
-        const result = await this.studentService.find({stuID, stuName, stuAge, stuGender/* ,classID */})
+        classgradeId = classgradeId || ''
+        const result = await this.studentService.find({stuID, stuName, stuAge, stuGender,classgradeId})
         if(result.errors){
             return res.send({success: false, error: result.errors})
         }
@@ -93,14 +101,15 @@ class StudentController{
      * @param {string} stuName.formData - 请输入姓名
      * @param {string} stuAge.formData - 请输入年龄
      * @param {string} stuGender.formData - 请输入性别
+     * @param {number} classgradeId.formData - 请输入班级id
      */
     updateStudent = async(req, res) => {
-        let {id,stuID,stuName,stuAge,stuGender/* ,classID */} = req.body
-        const validation = await this.util.validaRequiredFields({id,stuID,stuName,stuAge,stuGender/* ,classID */})
+        let {id,stuID,stuName,stuAge,stuGender,classgradeId} = req.body
+        const validation = await this.util.validaRequiredFields({id,stuID,stuName,stuAge,stuGender,classgradeId})
         if(validation !== true){
             return res.send(validation)
         }
-        const result = await this.studentService.update({id, stuID, stuName, stuAge, stuGender/* ,classID */})
+        const result = await this.studentService.update({id, stuID, stuName, stuAge, stuGender,classgradeId})
         if(result.length != 1){
             return res.send({success: false, msg: result})
         }
