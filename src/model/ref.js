@@ -8,6 +8,7 @@ var Teacher = require('./teacher')
 var User = require('./user')
 var Classgrade = require('./classgrade')
 var TeachGradeMappling = require('./teachgradeMappling')
+var Course = require('./course')
 
 // 一对一
 User.hasOne(Student)
@@ -20,6 +21,9 @@ Teacher.belongsTo(User)
 // 一对多
 Classgrade.hasMany(Student)
 Student.belongsTo(Classgrade)
+
+Course.hasMany(Teacher)
+Teacher.belongsTo(Course)
 
 // 多对多
 Classgrade.belongsToMany(Teacher,{
@@ -34,5 +38,11 @@ Teacher.belongsToMany(Classgrade,{
 })
  
   
-
-// sequelize.sync({force: true})      
+/* 默认创建两个管理员账户 */
+// sequelize.sync({force: true}).then(()=>{
+//     defaultUser()
+// })      
+const defaultUser = async ()=>{
+    await User.create({username: 'root', password: 'linzhe141', permissions: 0})
+    await User.create({username: 'admin', password: 'root', permissions: 0})
+}
