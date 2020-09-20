@@ -1,12 +1,12 @@
-var student = require('../model/student')
+var Classgrade = require('../model/classgrade')
 var sequelize = require('../../config/sequelize.config')
 var Sequelize = require('sequelize')
 var Op = Sequelize.Op
-class StudentService{
+class ClassgradeService{
     async findAll(){
         let result
         try {
-            result = await student.findAll()
+            result = await Classgrade.findAll()
         } catch(error){
             console.log('error-->',error)
             return error
@@ -14,11 +14,11 @@ class StudentService{
         return result
     }
 
-    async create({stuID,stuName,stuAge,stuGender, classgradeId}){
-        if(stuID && stuName && stuAge && stuGender　&& classgradeId){
+    async create({classNum,className}){
+        if(classNum && className){
             let result
             try { 
-                result = await student.create({stuID,stuName,stuAge,stuGender, classgradeId})
+                result = await Classgrade.create({classNum,className})
             } catch(error){
                 return error
             }
@@ -26,26 +26,19 @@ class StudentService{
         }
     }
 
-    async find({id,stuID,stuName,stuAge,stuGender,userId, classgradeId}){
+    async find({id,classNum,className}){
         let result
-        if(id || stuID || stuName || stuAge || stuGender || userId || classgradeId){
+        if(id || classNum || className){
             id = id || ''
-            stuID = stuID || ''
-            stuName = stuName || ''
-            stuAge = stuAge || ''
-            stuGender = stuGender || ''
-            userId = userId || ''
+            classNum = classNum || ''
+            className = className || ''
             try {
                 const params = {
                     id: {[Op.like]: `%${id}%`},
-                    stuID: {[Op.like]: `%${stuID}%`},
-                    stuName: {[Op.like]: `%${stuName}%`},
-                    stuAge: {[Op.like]: `%${stuAge}%`},
-                    stuGender: {[Op.like]: `%${stuGender}%`},
-                    userId: {[Op.like]: `%${userId}%`},
-                    classgradeId: {[Op.like]: `%${classgradeId}%`}
+                    classNum: {[Op.like]: `%${classNum}%`},
+                    className: {[Op.like]: `%${className}%`},
                 }
-                result = await student.findAll({
+                result = await Classgrade.findAll({
                     where: params
                 })
             } catch (error) {
@@ -55,11 +48,11 @@ class StudentService{
         }
     }
 
-    async update({id,stuID,stuName,stuAge,stuGender, classgradeId}){
+    async update({id,classNum,className}){
         let result
         try {
-            result = await student.update({
-                stuID,stuName,stuAge,stuGender, classgradeId
+            result = await Classgrade.update({
+                classNum,className
             },
             {
                 where: {id}
@@ -73,7 +66,7 @@ class StudentService{
     async deleteById({id}){
         let result 
         try {
-            result = await student.destroy({
+            result = await Classgrade.destroy({
                 where: {
                     id
                 }
@@ -90,7 +83,7 @@ class StudentService{
 let service;
 module.exports = async function () {
   if (!service) {
-    service = new StudentService();
+    service = new ClassgradeService();
   }
   return service;
 };
