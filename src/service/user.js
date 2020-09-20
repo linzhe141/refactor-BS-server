@@ -16,14 +16,16 @@ class UserService{
         } 
     }
 
-    async find({username, password,permissions}){
+    async find({id,username, password,permissions}){
         let result
-        if(username || password || permissions){
+        if(id || username || password || permissions){
+            id = id || ''
             username = username || ''
             password = password || ''
             permissions = permissions || ''
             try {
                 var params = {
+                    id: { [Op.like]: `%${id /* ? username: null */}%`},
                     username: { [Op.like]: `%${username /* ? username: null */}%`},
                     password: { [Op.like]: `%${password /* ? password: null */}%`},
                     permissions: { [Op.like]: `%${permissions /* ? permissions: null */}%`},
@@ -51,7 +53,6 @@ class UserService{
     }
 
     async adminLogin({username, password}){
-        console.log('login',username,password)
         let result 
         try {
             result = await this.find({username, password})

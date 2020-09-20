@@ -1,6 +1,6 @@
 const { Router } = require('express')
-const studentService = require('../service/student')
 const userService = require('../service/user')
+const studentService = require('../service/student')
 var util = require('../util')
 
 class StudentController{
@@ -38,7 +38,7 @@ class StudentController{
      * @param {string} stuID.formData - 请输入学生编号
      * @param {string} stuName.formData - 请输入学生姓名
      * @param {string} stuAge.formData - 请输入学生年龄
-     * @param {string} stuGender.formData - 请输入学生性别
+     * @param {enum} stuGender.formData - 请输入学生性别
      */
     createStudent = async(req, res) => {
         const {stuID,stuName,stuAge,stuGender/* ,classID */} = req.body
@@ -77,7 +77,6 @@ class StudentController{
         stuGender = stuGender || ''
        /*  classID = classID || '' */
         const result = await this.studentService.find({stuID, stuName, stuAge, stuGender/* ,classID */})
-        console.log(result)
         if(result.errors){
             return res.send({success: false, error: result.errors})
         }
