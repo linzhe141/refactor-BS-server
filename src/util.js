@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 class Util{
-    /**
-     * @method validaRequiredFields
+    /** 验证必填字段
+     * @method 验证必填字段
      * @for {Util}
      * @param {Object} 所验证的必填字段对象
      * @return {Boolean} ture表示通过，否则返回那些字段未填写
@@ -24,8 +24,8 @@ class Util{
         return true
     }
 
-    /**
-     * @method generateToken
+    /** 生成token
+     * @method 生成token
      * @for {Util}
      * @param {string} 使用用户名生成token
      * @return {string} 表示创建成功的token
@@ -40,8 +40,8 @@ class Util{
         return token
     }
 
-    /**
-     * @method verifyToken
+    /**  验证token
+     * @method 验证token
      * @for {Util}
      * @param {string} 前端传递过来的token
      * @return {any} 表示是否验证成功 
