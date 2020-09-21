@@ -9,6 +9,7 @@ var User = require('./user')
 var Classgrade = require('./classgrade')
 var TeachGradeMappling = require('./teachgradeMappling')
 var Course = require('./course')
+var Homework = require('./homework.js')
 
 // 一对一
 User.hasOne(Student)
@@ -24,6 +25,9 @@ Student.belongsTo(Classgrade)
 
 Course.hasMany(Teacher)
 Teacher.belongsTo(Course)
+
+Course.hasMany(Homework)
+Homework.belongsTo(Course)
 
 // 多对多
 Classgrade.belongsToMany(Teacher,{
