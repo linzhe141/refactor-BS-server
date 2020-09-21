@@ -1,5 +1,5 @@
 # refactor-BS-server
-## 毕业设计——学生作业管理系统后台程序```node版```重构中
+## 毕业设计——基于```node.js和mysql```的学生作业管理系统后台程序重构中
 ### 运行步骤
 + 1、使用git切换到develop分支
 + 2、安装mysql数据库，并在```config/mysql.db.config.js```配置相应的数据库信息
