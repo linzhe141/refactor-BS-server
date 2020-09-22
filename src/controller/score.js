@@ -1,7 +1,9 @@
 const { Router } = require('express')
 const scoreService = require('../service/score')
 var util = require('../util')
-
+const formidable = require('formidable')
+const fs = require('fs')
+const path = require('path')
 class ScoreController{
     // scoreService
     async init(){
@@ -9,11 +11,8 @@ class ScoreController{
         this.util = await util()
         const router = Router()
         router.get('/scoreList',this.scoreList)
-        router.post('/',this.createscore)
         router.get('/',this.find)
         router.put('/',this.updatescore)
-        router.delete('/',this.deletescore)
-        
         return router
     }
     
@@ -28,30 +27,7 @@ class ScoreController{
         return res.send({success: true, data: scoreList})
     }
 
-    /**
-     * 创建成绩
-     * @route POST /api/score/
-     * @summary 创建成绩
-     * @group scoreMapping - 成绩管理模块
-     * @param {Number} stuid.formData - 请输入学生id
-     * @param {Number} hwid.formData - 请输入作业id
-     * @param {string} score.formData - 请输入成绩
-     * @param {string} resultFile.formData - 请输入批改后的文件地址
-     */
-    createscore = async(req, res) => {
-        const {stuid,hwid,score,resultFile} = req.body
-        const validation = await this.util.validaRequiredFields({stuid,hwid,score,resultFile})
-        if(validation !== true){
-            return res.send(validation)
-        }
-        const newscore = await this.scoreService.create({stuid,hwid,score,resultFile})
-        if(newscore.errors){
-            return res.send({success: false, error: newscore.errors}) 
-        }
-        
-        return res.send({success: true, data: newscore})
-    }
-
+    
     /**
      * 查找成绩
      * @route GET /api/score/
@@ -82,37 +58,76 @@ class ScoreController{
      * @param {Number} hwid.formData - 请输入作业id
      * @param {string} score.formData - 请输入成绩
      * @param {string} resultFile.formData - 请输入批改后的文件地址
+     * @param {string} stuFile.formData - 请输入学生上传的作业文件地址
      */
     updatescore = async(req, res) => {
-        let {stuid,hwid,score,resultFile} = req.body 
-        const validation = await this.util.validaRequiredFields({stuid,hwid,score,resultFile})
-        if(validation !== true){
-            return res.send(validation)
-        }
-        const result = await this.scoreService.update({stuid,hwid,score,resultFile})
-        if(result.length != 1){
-            return res.send({success: false, msg: result})
-        }
-        return res.send({success: true, msg: '更新成功'})
-    }
-
-    /**
-     * 删除成绩
-     * @route DELETE /api/score/
-     * @summary 删除成绩
-     * @group scoreMapping - 成绩管理模块
-     * @param {Number} stuid.formData - 请输入学生id
-     * @param {Number} hwid.formData - 请输入作业id
-     */
-    deletescore = async(req, res) => {
-        const {stuid,hwid} = req.body
-        const scoreMapping = await this.scoreService.find({stuid,hwid})
-        if(scoreMapping.length){
-            const deletescoreMapping = await this.scoreService.delete({stuid,hwid})
-            res.send({success: true, data: deletescoreMapping})
-        } else {
-            res.send({success: false, msg: '已删除'})
-        }
+        const form = new formidable.IncomingForm()
+        const _this = this
+        form.parse(req, async function (err, fields, files) {
+            const {stuid,hwid,score} = fields
+            const stuFile = files.stuFile && files.stuFile.name
+            const resultFile = files.resultFile && files.resultFile.name
+            const validation = await _this.util.validaRequiredFields({stuid,hwid})
+            if(validation !== true){
+                return res.send(validation)
+            }
+            const oldItem = await _this.scoreService.find({stuid,hwid})
+            if(oldItem.length){
+                console.log('stuFile--->',oldItem[0].stuFile)
+                console.log('resultFile--->',oldItem[0].resultFile)
+                if(oldItem[0].stuFile){
+                    fs.unlink(oldItem[0].stuFile,function(err){
+                        if(err){
+                            return res.send({success: false, msg: '更新失败'})
+                        }
+                    })
+                }
+                if(oldItem[0].resultFile){
+                    fs.unlink(oldItem[0].resultFile,function(err){
+                        if(err){
+                            return res.send({success: false, msg: '更新失败'})
+                        }
+                    })
+                }
+            }
+            if(stuFile){
+                const fname = (new Date()).getTime() + '-' + stuFile
+                const uploadDir = path.join(__dirname, '../upload/completion/'+fname);
+                fs.rename(files.stuFile.path, uploadDir , async function(err){
+                    if(err){
+                        console.log(err)
+                        return res.send({success: false, msg: '文件上传失败'})
+                    }
+                    const result = await _this.scoreService.update({stuid,hwid,score,resultFile,stuFile:uploadDir})
+                    if(result.errors){
+                        return res.send({success: false, error: result.errors}) 
+                    }
+                    return res.send({success: true, msg: '更新成功'})
+                })
+            } 
+            if(resultFile){
+                const fname = (new Date()).getTime() + '-' + resultFile
+                const uploadDir = path.join(__dirname, '../upload/completion/'+fname);
+                fs.rename(files.resultFile.path, uploadDir , async function(err){
+                    if(err){
+                        console.log(err)
+                        return res.send({success: false, msg: '文件上传失败'})
+                    }
+                    const result = await _this.scoreService.update({stuid,hwid,score,resultFile,stuFile:uploadDir})
+                    if(result.errors){
+                        return res.send({success: false, error: result.errors}) 
+                    }
+                    return res.send({success: true, msg: '更新成功'})
+                })
+            } 
+            if(!stuFile && !resultFile) {
+                const result = await _this.scoreService.update({stuid,hwid,score,resultFile,stuFile})
+                if(result.errors){
+                    return res.send({success: false, error: result.errors}) 
+                }
+                return res.send({success: true, msg: '更新成功'})
+            }
+        })
     }
 }
 module.exports = async () => {

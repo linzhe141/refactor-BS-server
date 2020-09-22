@@ -14,6 +14,7 @@ var Score = sequelize.define('score', {
     },
     score: Sequelize.STRING(50),
     resultFile: Sequelize.STRING(250),
+    stuFile: Sequelize.STRING(250),
 }, {
     timestamps: false,
     raw: true,

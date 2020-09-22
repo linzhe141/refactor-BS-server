@@ -82,14 +82,14 @@ class HomeworkController{
                         const hwid = newHomework.id
                         const stuArr = await _this.studentService.find({classgradeId})
                         await stuArr.forEach(async function(item) {
-                            await _this.scoreService.create({stuid:item.id,hwid,score:'',resultFile:''})
+                            await _this.scoreService.create({stuid:item.id,hwid,score:'',resultFile:'',stuFile: ''})
                         })
                     }
                     // 学生为单位
                     if(type == 2){
                         const hwid = newHomework.id
                         await stuList.forEach(async function(item) {
-                            await _this.scoreService.create({stuid:item,hwid,score:'',resultFile:''})
+                            await _this.scoreService.create({stuid:item,hwid,score:'',resultFile:'',stuFile:''})
                         })
                     }
                     return res.send({success: true, data: newHomework})
@@ -98,6 +98,21 @@ class HomeworkController{
                 const newHomework = await _this.homeworkService.create({hwName,hwDesc,endDate,type,teacherId,hwFile:''})
                 if(newHomework.errors){
                     return res.send({success: false, error: newHomework.errors}) 
+                }
+                // 班级为单位
+                if(type == 1){
+                    const hwid = newHomework.id
+                    const stuArr = await _this.studentService.find({classgradeId})
+                    await stuArr.forEach(async function(item) {
+                        await _this.scoreService.create({stuid:item.id,hwid,score:'',resultFile:'',stuFile: ''})
+                    })
+                }
+                // 学生为单位
+                if(type == 2){
+                    const hwid = newHomework.id
+                    await stuList.forEach(async function(item) {
+                        await _this.scoreService.create({stuid:item,hwid,score:'',resultFile:'',stuFile:''})
+                    })
                 }
                 return res.send({success: true, data: newHomework})
             }
@@ -197,14 +212,14 @@ class HomeworkController{
                     if(type == 1){
                         const stuArr = await _this.studentService.find({classgradeId})
                         await stuArr.forEach(async function(item) {
-                            await _this.scoreService.create({stuid:item.id,hwid:id,score:'',resultFile:''})
+                            await _this.scoreService.create({stuid:item.id,hwid:id,score:'',resultFile:'',stuFile: ''})
                         })
                         return res.send({success: true, msg: '更新成功'})
                     }
                     // 学生为单位
                     if(type == 2){
                         await stuList.forEach(async function(item) {
-                            await _this.scoreService.create({stuid:item,hwid:id,score:'',resultFile:''})
+                            await _this.scoreService.create({stuid:item,hwid:id,score:'',resultFile:'',stuFile: ''})
                         })
                         return res.send({success: true, msg: '更新成功'})
                     }

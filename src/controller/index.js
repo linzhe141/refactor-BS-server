@@ -6,6 +6,7 @@ const classgradeController = require('./classgrade')
 const teachgradeController = require('./teachgrade')
 const coourseController = require('./course')
 const homeworkController = require('./homework')
+const scoreController = require('./score')
 
 module.exports = async function initControllers(){
     const router =  Router()
@@ -16,5 +17,6 @@ module.exports = async function initControllers(){
     router.use('/api/teachgrade', await teachgradeController())
     router.use('/api/course', await coourseController())
     router.use('/api/homework', await homeworkController())
+    router.use('/api/score', await scoreController())
     return router
 }

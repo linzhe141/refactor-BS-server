@@ -14,12 +14,12 @@ class ScoreService{
         return result
     }
 
-    async create({stuid,hwid,score,resultFile}){
+    async create({stuid,hwid,score,resultFile,stuFile}){
         console.log('Create---->')
         if(stuid && hwid){
             let result
             try { 
-                result = await Score.create({stuid,hwid,score,resultFile})
+                result = await Score.create({stuid,hwid,score,resultFile,stuFile})
             } catch(error){
                 return error
             }
@@ -49,11 +49,11 @@ class ScoreService{
         }
     }
 
-    async update({stuid, hwid, score, resultFile}){
+    async update({stuid, hwid, score, resultFile, stuFile}){
         let result
         try {
             result = await Score.update({
-                score, resultFile
+                score, resultFile,stuFile
             },
             {
                 where: {stuid, hwid}
