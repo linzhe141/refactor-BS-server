@@ -10,6 +10,7 @@ var Classgrade = require('./classgrade')
 var TeachGradeMappling = require('./teachgradeMappling')
 var Course = require('./course')
 var Homework = require('./homework.js')
+var Score = require('./score')
 
 // 一对一
 User.hasOne(Student)
@@ -26,8 +27,8 @@ Student.belongsTo(Classgrade)
 Course.hasMany(Teacher)
 Teacher.belongsTo(Course)
 
-Course.hasMany(Homework)
-Homework.belongsTo(Course)
+Teacher.hasMany(Homework)
+Homework.belongsTo(Teacher)
 
 // 多对多
 Classgrade.belongsToMany(Teacher,{
@@ -39,6 +40,15 @@ Teacher.belongsToMany(Classgrade,{
     through: TeachGradeMappling,
     foreignKey: 'tchId',
     otherKey: 'classgradeId',
+})
+
+Homework.belongsToMany(Student,{
+    through: Score,
+    foreignKey: 'hwid',
+}) 
+Student.belongsToMany(Homework,{
+    through: Score,
+    foreignKey: 'stuid',
 })
  
   
@@ -76,9 +86,9 @@ const defaultUser = async ()=>{
     await TeachGradeMappling.create({tchId: 2, classgradeId: 2})
     await TeachGradeMappling.create({tchId: 3, classgradeId: 1})
 
-    await Student.create({stuID: '160101', stuName: 'linzhe', stuAge: 18, stuGender: '男', classgradeId: 1,userId: 6})
-    await Student.create({stuID: '160102', stuName: 'wangxx', stuAge: 18, stuGender: '男', classgradeId: 1,userId: 7})
-    await Student.create({stuID: '160103', stuName: 'lixx', stuAge: 18, stuGender: '女', classgradeId: 1,userId: 8})
-    await Student.create({stuID: '160201', stuName: 'zhangxx', stuAge: 18, stuGender: '男', classgradeId: 2,userId: 9})
-    await Student.create({stuID: '160202', stuName: 'liuxx', stuAge: 18, stuGender: '女 ', classgradeId: 2,userId: 10})
+    await Student.create({stuNum: '160101', stuName: 'linzhe', stuAge: 18, stuGender: '男', classgradeId: 1,userId: 6})
+    await Student.create({stuNum: '160102', stuName: 'wangxx', stuAge: 18, stuGender: '男', classgradeId: 1,userId: 7})
+    await Student.create({stuNum: '160103', stuName: 'lixx', stuAge: 18, stuGender: '女', classgradeId: 1,userId: 8})
+    await Student.create({stuNum: '160201', stuName: 'zhangxx', stuAge: 18, stuGender: '男', classgradeId: 2,userId: 9})
+    await Student.create({stuNum: '160202', stuName: 'liuxx', stuAge: 18, stuGender: '女 ', classgradeId: 2,userId: 10})
 }

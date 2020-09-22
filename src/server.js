@@ -16,8 +16,14 @@ server.use(bodyParser.urlencoded({
 }));
 process.env.TZ = 'Asia/Shanghai';
 // 文件上传
-const homeDirectory = path.join(__dirname,'upload/homework')
-fs.existsSync(homeDirectory) || fs.mkdirSync(homeDirectory)
+const hwDirectory = path.join(__dirname,'upload/homework')
+fs.existsSync(hwDirectory) || fs.mkdirSync(hwDirectory)
+
+const correctDirectory = path.join(__dirname,'upload/correct')
+fs.existsSync(correctDirectory) || fs.mkdirSync(correctDirectory)
+
+const completionDirectory = path.join(__dirname,'upload/completion')
+fs.existsSync(completionDirectory) || fs.mkdirSync(completionDirectory)
 // 日志模块配置
 const logDirectory = path.join(__dirname,'log')
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)

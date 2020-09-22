@@ -14,11 +14,11 @@ class StudentService{
         return result
     }
 
-    async create({stuID,stuName,stuAge,stuGender, classgradeId}){
-        if(stuID && stuName && stuAge && stuGender　&& classgradeId){
+    async create({stuNum,stuName,stuAge,stuGender, classgradeId}){
+        if(stuNum && stuName && stuAge && stuGender　&& classgradeId){
             let result
             try { 
-                result = await student.create({stuID,stuName,stuAge,stuGender, classgradeId})
+                result = await student.create({stuNum,stuName,stuAge,stuGender, classgradeId})
             } catch(error){
                 return error
             }
@@ -26,11 +26,11 @@ class StudentService{
         }
     }
 
-    async find({id,stuID,stuName,stuAge,stuGender,userId, classgradeId}){
+    async find({id,stuNum,stuName,stuAge,stuGender,userId, classgradeId}){
         let result
-        if(id || stuID || stuName || stuAge || stuGender || userId || classgradeId){
+        if(id || stuNum || stuName || stuAge || stuGender || userId || classgradeId){
             id = id || ''
-            stuID = stuID || ''
+            stuNum = stuNum || ''
             stuName = stuName || ''
             stuAge = stuAge || ''
             stuGender = stuGender || ''
@@ -38,7 +38,7 @@ class StudentService{
             try {
                 const params = {
                     id: {[Op.like]: `%${id}%`},
-                    stuID: {[Op.like]: `%${stuID}%`},
+                    stuNum: {[Op.like]: `%${stuNum}%`},
                     stuName: {[Op.like]: `%${stuName}%`},
                     stuAge: {[Op.like]: `%${stuAge}%`},
                     stuGender: {[Op.like]: `%${stuGender}%`},
@@ -55,11 +55,11 @@ class StudentService{
         }
     }
 
-    async update({id,stuID,stuName,stuAge,stuGender, classgradeId}){
+    async update({id,stuNum,stuName,stuAge,stuGender, classgradeId}){
         let result
         try {
             result = await student.update({
-                stuID,stuName,stuAge,stuGender, classgradeId
+                stuNum,stuName,stuAge,stuGender, classgradeId
             },
             {
                 where: {id}

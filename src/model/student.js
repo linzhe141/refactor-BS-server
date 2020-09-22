@@ -8,7 +8,7 @@ var Student = sequelize.define('students', {
         autoIncrement: true, //自动递增
         primaryKey: true //主键
     },
-    stuID: Sequelize.STRING(50),
+    stuNum: Sequelize.STRING(50),
     stuName: Sequelize.STRING(50),
     stuAge: Sequelize.BIGINT(50),
     stuGender: Sequelize.STRING(50),

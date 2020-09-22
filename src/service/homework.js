@@ -14,11 +14,11 @@ class HomeworkService{
         return result
     }
 
-    async create({hwName,hwDesc,endDate,hwFile,courseId}){
-        if(hwName && endDate && courseId){
+    async create({hwName,hwDesc,endDate,hwFile,type,teacherId}){
+        if(hwName && endDate && teacherId){
             let result
             try { 
-                result = await Homework.create({hwName,hwDesc,endDate,hwFile,courseId})
+                result = await Homework.create({hwName,hwDesc,endDate,hwFile, type, teacherId})
             } catch(error){
                 return error
             }
@@ -26,19 +26,21 @@ class HomeworkService{
         }
     }
 
-    async find({id,hwName,endDate,courseId}){
+    async find({id,hwName,endDate, type, teacherId}){
         let result
         if(id || hwName || endDate){
             id = id || ''
             hwName = hwName || ''
             endDate = endDate || ''
-            courseId = courseId || ''
+            type = type || ''
+            teacherId = teacherId || ''
             try {
                 const params = {
                     id: {[Op.like]: `%${id}%`},
                     hwName: {[Op.like]: `%${hwName}%`},
                     endDate: {[Op.like]: `%${endDate}%`},
-                    courseId: {[Op.like]: `%${courseId}%`},
+                    type: {[Op.like]: `%${type}%`},
+                    teacherId: {[Op.like]: `%${teacherId}%`},
                 }
                 result = await Homework.findAll({
                     where: params
@@ -50,11 +52,11 @@ class HomeworkService{
         }
     }
 
-    async update({id,hwName,hwDesc,endDate,hwFile,courseId}){
+    async update({id,hwName,hwDesc,endDate,hwFile,type,teacherId}){
         let result
         try {
             result = await Homework.update({
-                hwName,hwDesc,endDate,hwFile,courseId
+                hwName,hwDesc,endDate,hwFile,type,teacherId
             },
             {
                 where: {id}

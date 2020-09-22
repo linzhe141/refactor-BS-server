@@ -12,6 +12,7 @@ var Homework = sequelize.define('homework', {
     hwDesc: Sequelize.STRING(50),
     endDate: Sequelize.STRING(50),
     hwFile: Sequelize.STRING(250),
+    type: Sequelize.INTEGER,
 }, {
     timestamps: false,
     raw: true,
