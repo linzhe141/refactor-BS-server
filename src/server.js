@@ -87,5 +87,6 @@ async function serverStart() {
     server.use(await initControllers());
     server.listen(port)
     console.log(`> Started on port ${port}`)
+    console.log(`> swagger--> http://localhost:${port}/swagger`)
 }
 serverStart()

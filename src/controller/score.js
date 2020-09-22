@@ -57,8 +57,8 @@ class ScoreController{
      * @param {Number} stuid.formData - 请输入学生id
      * @param {Number} hwid.formData - 请输入作业id
      * @param {string} score.formData - 请输入成绩
-     * @param {string} resultFile.formData - 请输入批改后的文件地址
-     * @param {string} stuFile.formData - 请输入学生上传的作业文件地址
+     * @param {file} resultFile.formData - 请输入批改后的文件地址
+     * @param {file} stuFile.formData - 请输入学生上传的作业文件地址
      */
     updatescore = async(req, res) => {
         const form = new formidable.IncomingForm()
