@@ -25,5 +25,5 @@ yarn-error.log*
 src/log
 .log
 */log
-
+src/upload
 src/upload/*

@@ -16,8 +16,11 @@ server.use(bodyParser.urlencoded({
 }));
 process.env.TZ = 'Asia/Shanghai';
 // 文件上传
+const uploadDirectory = path.join(__dirname,'upload')
+fs.existsSync(uploadDirectory) || fs.mkdirSync(uploadDirectory)
+
 const hwDirectory = path.join(__dirname,'upload/homework')
-fs.existsSync(hwDirectory) || fs.mkdirSync(hwDirectory)
+fs.existsSync(hwDirectory) || fs.mkdirSync(hwDirectory) 
 
 const correctDirectory = path.join(__dirname,'upload/correct')
 fs.existsSync(correctDirectory) || fs.mkdirSync(correctDirectory)
