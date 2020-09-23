@@ -35,6 +35,7 @@ class StudentService{
             stuAge = stuAge || ''
             stuGender = stuGender || ''
             userId = userId || ''
+            classgradeId = classgradeId || ''
             try {
                 const params = {
                     id: {[Op.like]: `%${id}%`},

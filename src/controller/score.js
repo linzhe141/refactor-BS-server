@@ -12,7 +12,8 @@ class ScoreController{
         const router = Router()
         router.get('/scoreList',this.scoreList)
         router.get('/',this.find)
-        router.put('/',this.updatescore)
+        router.put('/upload',this.upload)
+        router.put('/correct',this.correct)
         return router
     }
     
@@ -50,31 +51,28 @@ class ScoreController{
     }
 
     /**
-     * 更新成绩
-     * @route PUT /api/score/
-     * @summary 更新成绩
+     * 上传作业
+     * @route PUT /api/score/upload
+     * @summary 上传作业
      * @group score - 成绩管理模块
      * @param {Number} stuid.formData - 请输入学生id
      * @param {Number} hwid.formData - 请输入作业id
-     * @param {string} score.formData - 请输入成绩
-     * @param {file} resultFile.formData - 请输入批改后的文件地址
      * @param {file} stuFile.formData - 请输入学生上传的作业文件地址
      */
-    updatescore = async(req, res) => {
+    upload = async(req, res) => {
         const form = new formidable.IncomingForm()
         const _this = this
         form.parse(req, async function (err, fields, files) {
             const {stuid,hwid,score} = fields
             const stuFile = files.stuFile && files.stuFile.name
-            const resultFile = files.resultFile && files.resultFile.name
-            const validation = await _this.util.validaRequiredFields({stuid,hwid})
+            const validation = await _this.util.validaRequiredFields({stuid,hwid,stuFile})
             if(validation !== true){
                 return res.send(validation)
             }
             const oldItem = await _this.scoreService.find({stuid,hwid})
+            let resultFile = ''
             if(oldItem.length){
-                console.log('stuFile--->',oldItem[0].stuFile)
-                console.log('resultFile--->',oldItem[0].resultFile)
+                resultFile = oldItem[0].resultFile 
                 if(oldItem[0].stuFile){
                     fs.unlink(oldItem[0].stuFile,function(err){
                         if(err){
@@ -82,6 +80,49 @@ class ScoreController{
                         }
                     })
                 }
+            }
+
+            const fname = (new Date()).getTime() + '-' + stuFile
+            const uploadDir = path.join(__dirname, '../upload/completion/'+fname);
+            fs.rename(files.stuFile.path, uploadDir , async function(err){
+                if(err){
+                    console.log(err)
+                    return res.send({success: false, msg: '文件上传失败'})
+                }
+                const result = await _this.scoreService.update({stuid,hwid,score,resultFile,stuFile:uploadDir})
+                if(result.errors){
+                    return res.send({success: false, error: result.errors}) 
+                }
+                return res.send({success: true, msg: '更新成功'})
+            })
+        })
+    }
+
+    /**
+     * 批改作业
+     * @route PUT /api/score/correct
+     * @summary 批改作业
+     * @group score - 成绩管理模块
+     * @param {Number} stuid.formData - 请输入学生id
+     * @param {Number} hwid.formData - 请输入作业id
+     * @param {string} score.formData - 请输入成绩
+     * @param {file} resultFile.formData - 请输入批改后的文件地址
+     */
+    correct = async(req, res) => {
+        const form = new formidable.IncomingForm()
+        const _this = this
+        form.parse(req, async function (err, fields, files) {
+            const {stuid,hwid,score} = fields
+            const resultFile = files.resultFile && files.resultFile.name
+            const validation = await _this.util.validaRequiredFields({stuid,hwid,score})
+            if(validation !== true){
+                return res.send(validation)
+            }
+            const oldItem = await _this.scoreService.find({stuid,hwid})
+            let stuFile = ''
+            if(oldItem.length){
+                stuFile = oldItem[0].stuFile
+                console.log(oldItem[0].resultFile)
                 if(oldItem[0].resultFile){
                     fs.unlink(oldItem[0].resultFile,function(err){
                         if(err){
@@ -90,37 +131,21 @@ class ScoreController{
                     })
                 }
             }
-            if(stuFile){
-                const fname = (new Date()).getTime() + '-' + stuFile
-                const uploadDir = path.join(__dirname, '../upload/completion/'+fname);
-                fs.rename(files.stuFile.path, uploadDir , async function(err){
-                    if(err){
-                        console.log(err)
-                        return res.send({success: false, msg: '文件上传失败'})
-                    }
-                    const result = await _this.scoreService.update({stuid,hwid,score,resultFile,stuFile:uploadDir})
-                    if(result.errors){
-                        return res.send({success: false, error: result.errors}) 
-                    }
-                    return res.send({success: true, msg: '更新成功'})
-                })
-            } 
             if(resultFile){
                 const fname = (new Date()).getTime() + '-' + resultFile
-                const uploadDir = path.join(__dirname, '../upload/completion/'+fname);
+                const uploadDir = path.join(__dirname, '../upload/correct/'+fname);
                 fs.rename(files.resultFile.path, uploadDir , async function(err){
                     if(err){
                         console.log(err)
                         return res.send({success: false, msg: '文件上传失败'})
                     }
-                    const result = await _this.scoreService.update({stuid,hwid,score,resultFile,stuFile:uploadDir})
+                    const result = await _this.scoreService.update({stuid,hwid,score,resultFile:uploadDir,stuFile})
                     if(result.errors){
                         return res.send({success: false, error: result.errors}) 
                     }
                     return res.send({success: true, msg: '更新成功'})
                 })
-            } 
-            if(!stuFile && !resultFile) {
+            } else{
                 const result = await _this.scoreService.update({stuid,hwid,score,resultFile,stuFile})
                 if(result.errors){
                     return res.send({success: false, error: result.errors}) 

@@ -34,7 +34,7 @@ fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
 const accessLogStream = FileStreamRotator.getStream({
     date_format: 'YYYYMMDD',
     filename: path.join(logDirectory, 'access-%DATE%.log'),
-    // frequency: 'daily',
+    // frequency: 'daily', 
     verbose: true
 })
 // 自定义token

@@ -42,12 +42,14 @@ class HomeworkController{
      * @route POST /api/homework/
      * @summary 创建作业
      * @group homework - 作业管理模块
+     * @param {Number} teacherId.formData - 请选择教师id
+     * @param {Number} type.formData - 请上传作业类型 1:班级为单位;2:学生为单位
+     * @param {string} classgradeId.formData - 请输入班级
+     * @param {Array} stuList.formData - 请输入学生
      * @param {string} hwName.formData - 请输入作业名
      * @param {string} hwDesc.formData - 请输入作业描述
      * @param {string} endDate.formData - 请输入截止日期
      * @param {file} hwFile.formData - 请上传作业文件
-     * @param {Number} type.formData - 请上传作业类型 1:学生为单位;2:班级为单位
-     * @param {Number} teacherId.formData - 请选择教师id
      */
     createHomework = async(req, res) => {
         const form = new formidable.IncomingForm()
@@ -149,13 +151,15 @@ class HomeworkController{
      * @route PUT /api/homework/
      * @summary 更新作业
      * @group homework - 作业管理模块
-     * @param {string} id.formData - 请输入id
+     * @param {string} id.formData - 请输入作业id
+     * @param {Number} teacherId.formData - 请选择教师id
+     * @param {Number} type.formData - 请上传作业类型 1:班级为单位;2:学生为单位
+     * @param {string} classgradeId.formData - 请输入班级
+     * @param {Array} stuList.formData - 请输入学生
      * @param {string} hwName.formData - 请输入作业名
      * @param {string} hwDesc.formData - 请输入作业描述
      * @param {string} endDate.formData - 请输入截止日期
      * @param {file} hwFile.formData - 请上传作业文件
-     * @param {Number} type.formData - 请上传作业类型 1:班级为单位;2:学生为单位
-     * @param {Number} teacherId.formData - 请选择教师id
      */
     updateHomework = async(req, res) => {
         const form = new formidable.IncomingForm()
@@ -173,12 +177,15 @@ class HomeworkController{
                 return res.send({success: false, msg: '请先创建教师'})
             }
             const oldFile = await _this.homeworkService.find({id})
+            console.log('fdsadfsa',oldFile[0].hwFile)
+            console.log('fdsadfsa',oldFile.length && oldFile[0].hwFile)
             if(oldFile.length && oldFile[0].hwFile){
                 const oldFileItem = oldFile[0].hwFile
                 fs.unlink(oldFileItem,function(err){
                     if(err){
                         return res.send({success: false, msg: '更新作业失败'})
                     }
+                    console.log('删除成功')
                 })
             }
             const oldScore = await _this.scoreService.find({hwid:id})
@@ -191,14 +198,21 @@ class HomeworkController{
                             }
                         })
                     }
+                    if(item.stuFile){
+                        fs.unlink(item.stuFile,function(err){
+                            if(err){
+                                return res.send({success: false, msg: '更新作业失败'})
+                            }
+                        })
+                    }
                 })
                 await _this.scoreService.deleteByHwid({hwid: id})
             }
-            const hwFile = files.hwFile.name
+            const hwFile = files.hwFile && files.hwFile.name || ''
+            console.log('hwFile---->',hwFile)
             if(hwFile){
                 const fname = (new Date()).getTime() + '-' + hwFile
                 const uploadDir = path.join(__dirname, '../upload/homework/'+fname);
-                console.log({id,hwName,hwDesc,endDate,teacherId,hwFile:uploadDir})
                 fs.rename(files.hwFile.path, uploadDir , async function(err){
                     if(err){
                         console.log(err)
@@ -229,6 +243,21 @@ class HomeworkController{
                 if(result.errors){
                     return res.send({success: false, error: result.errors}) 
                 }
+                // 班级为单位
+                if(type == 1){
+                    const stuArr = await _this.studentService.find({classgradeId})
+                    await stuArr.forEach(async function(item) {
+                        await _this.scoreService.create({stuid:item.id,hwid:id,score:'',resultFile:'',stuFile: ''})
+                    })
+                    return res.send({success: true, msg: '更新成功'})
+                }
+                // 学生为单位
+                if(type == 2){
+                    await stuList.forEach(async function(item) {
+                        await _this.scoreService.create({stuid:item,hwid:id,score:'',resultFile:'',stuFile: ''})
+                    })
+                    return res.send({success: true, msg: '更新成功'})
+                }
                 return res.send({success: true, msg: '更新成功'})
             }
         })
@@ -243,15 +272,15 @@ class HomeworkController{
      */
     deleteHomework = async(req, res) => {
         const {id} = req.body
-        console.log('id--->',id)
         const homework = await this.homeworkService.find({id})
-        console.log(homework)
-        
         if(homework.length){
-            const hwid = homework[0].id
             const fileItem = homework[0].hwFile
-            console.log('hwid---->',hwid)
-            console.log('fileItem---->',fileItem)
+            fs.unlink(fileItem,function(err){
+                if(err){
+                    return res.send({success: false, msg: '更新作业失败'})
+                }
+            })
+          
             const oldScore = await this.scoreService.find({hwid:id})
             if(oldScore.length){
                 oldScore.forEach(async (item) => {
@@ -262,15 +291,16 @@ class HomeworkController{
                             }
                         })
                     }
+                    if(item.stuFile){
+                        fs.unlink(item.stuFile,function(err){
+                            if(err){
+                                return res.send({success: false, msg: '删除作业失败'})
+                            }
+                        })
+                    }
                 })
                 await this.scoreService.deleteByHwid({hwid: id})
             }
-            fs.unlink(fileItem,function(err){
-                if(err){
-                    console.log(err)
-                    return res.send({success: false, msg: '删除作业失败'})
-                }
-            }) 
             const deletehw = await this.homeworkService.deleteById({id})
             return res.send({success: true, data: deletehw})
         } else {
