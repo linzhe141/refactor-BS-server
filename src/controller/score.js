@@ -20,7 +20,7 @@ class ScoreController{
      * 获取所有成绩
      * @route GET /api/score/scoreList
      * @summary 获取所有成绩
-     * @group scoreMapping - 成绩管理模块
+     * @group score - 成绩管理模块
      */
     scoreList = async(req, res) => {
         const scoreList = await this.scoreService.findAll()
@@ -32,7 +32,7 @@ class ScoreController{
      * 查找成绩
      * @route GET /api/score/
      * @summary 查找成绩
-     * @group scoreMapping - 成绩管理模块
+     * @group score - 成绩管理模块
      * @param {Number} stuid.query - 请输入学生id
      * @param {Number} hwid.query - 请输入作业id
      * @param {string} score.query - 请输入成绩
@@ -53,7 +53,7 @@ class ScoreController{
      * 更新成绩
      * @route PUT /api/score/
      * @summary 更新成绩
-     * @group scoreMapping - 成绩管理模块
+     * @group score - 成绩管理模块
      * @param {Number} stuid.formData - 请输入学生id
      * @param {Number} hwid.formData - 请输入作业id
      * @param {string} score.formData - 请输入成绩
