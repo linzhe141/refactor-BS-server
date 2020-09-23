@@ -88,6 +88,8 @@ let options = {
 expressSwagger(options)
 async function serverStart() {
     server.use(await initControllers());
+    //静态资源服务
+    server.use('/public/', express.static(path.join(__dirname, './public/')));
     server.listen(port)
     console.log(`> Started on port ${port}`)
     console.log(`> swagger--> http://localhost:${port}/swagger`)

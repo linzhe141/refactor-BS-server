@@ -27,3 +27,4 @@ src/log
 */log
 src/upload
 src/upload/*
+public/*
