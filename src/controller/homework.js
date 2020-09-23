@@ -45,7 +45,7 @@ class HomeworkController{
      * @param {string} hwName.formData - 请输入作业名
      * @param {string} hwDesc.formData - 请输入作业描述
      * @param {string} endDate.formData - 请输入截止日期
-     * @param {string} hwFile.formData - 请上传作业文件
+     * @param {file} hwFile.formData - 请上传作业文件
      * @param {Number} type.formData - 请上传作业类型 1:学生为单位;2:班级为单位
      * @param {Number} teacherId.formData - 请选择教师id
      */
@@ -153,8 +153,8 @@ class HomeworkController{
      * @param {string} hwName.formData - 请输入作业名
      * @param {string} hwDesc.formData - 请输入作业描述
      * @param {string} endDate.formData - 请输入截止日期
-     * @param {string} hwFile.formData - 请上传作业文件
-     * @param {Number} type.formData - 请上传作业类型 1:学生为单位;2:班级为单位
+     * @param {file} hwFile.formData - 请上传作业文件
+     * @param {Number} type.formData - 请上传作业类型 1:班级为单位;2:学生为单位
      * @param {Number} teacherId.formData - 请选择教师id
      */
     updateHomework = async(req, res) => {
