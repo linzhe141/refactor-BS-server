@@ -28,7 +28,7 @@ class HomeworkService{
 
     async find({id,hwName,endDate, type, teacherId}){
         let result
-        if(id || hwName || endDate || typed){
+        if(id || hwName || endDate || type){
             id = id || ''
             hwName = hwName || ''
             endDate = endDate || ''
