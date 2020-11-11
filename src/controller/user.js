@@ -170,7 +170,7 @@ class UserController{
 
     
 }
-module.exports = async () => {
+module.exports =    async () => {
     const c = new UserController();
     return await c.init();
 };

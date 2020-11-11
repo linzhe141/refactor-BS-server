@@ -139,7 +139,9 @@ class HomeworkController{
         endDate = endDate || ''
         type = type || ''
         teacherId = teacherId || ''
+        console.log('params--->',{id,hwName,endDate, type, teacherId})
         const result = await this.homeworkService.find({id,hwName,endDate, type, teacherId})
+        console.log('result------->\n',result)
         if(result.errors){
             return res.send({success: false, error: result.errors})
         }

@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const FileStreamRotator = require('file-stream-rotator')
 const fs = require('fs')
 const path = require('path')
+const util = require('./util')
 
 const initControllers = require('./controller/index.js');
 
@@ -87,6 +88,24 @@ let options = {
 }
 expressSwagger(options)
 async function serverStart() {
+    server.use(async function(req, res, next) {
+        console.log(req.url)
+        if (req.url != '/api/user/login') {
+            let token = req.headers.token;
+            const utilTool = await util()
+            let result = await utilTool.verifyToken(token);
+            console.log('TokenResult---->',result);
+            console.log('TokenResult---->',result == 'err');
+            if (result == 'err') {
+                res.send({status: 403, msg: '登录已过期,请重新登录'});
+            } else {
+                next();
+            }
+        } else {
+            next();
+        }
+    
+    })
     server.use(await initControllers());
     server.listen(port)
     console.log(`> Started on port ${port}`)
