@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const scoreService = require('../service/score')
+const studentService = require('../service/student')
 var util = require('../util')
 const formidable = require('formidable')
 const fs = require('fs')
@@ -8,6 +9,7 @@ class ScoreController{
     // scoreService
     async init(){
         this.scoreService = await scoreService()
+        this.studentService = await studentService()
         this.util = await util()
         const router = Router()
         router.get('/scoreList',this.scoreList)
@@ -47,7 +49,18 @@ class ScoreController{
         if(result.errors){
             return res.send({success: false, error: result.errors})
         }
-        return res.send({success: true, data: result})
+        const data = []
+        for(let item of result){
+            const value = (await this.studentService.find({id:item.stuid}))[0]
+            data.push({
+                stuName: value.stuName,
+                stuid: item.stuid,
+                state: item.state,  
+                score: item.score,
+                comments: item.comments
+            })
+        }
+        return res.send({success: true, data: data})
     }
 
     /**
@@ -86,7 +99,6 @@ class ScoreController{
             const uploadDir = path.join(__dirname, '../upload/completion/'+fname);
             fs.rename(files.stuFile.path, uploadDir , async function(err){
                 if(err){
-                    console.log(err)
                     return res.send({success: false, msg: '文件上传失败'})
                 }
                 const result = await _this.scoreService.update({stuid,hwid,score,resultFile,stuFile:uploadDir})
@@ -105,16 +117,18 @@ class ScoreController{
      * @group score - 成绩管理模块
      * @param {Number} stuid.formData - 请输入学生id
      * @param {Number} hwid.formData - 请输入作业id
+     * @param {Number} state.formData - 请输入是否完成 1表示完成，0表示未完成
      * @param {string} score.formData - 请输入成绩
+     * @param {string} comments.formData - 请输入评语
      * @param {file} resultFile.formData - 请输入批改后的文件地址
      */
     correct = async(req, res) => {
         const form = new formidable.IncomingForm()
         const _this = this
         form.parse(req, async function (err, fields, files) {
-            const {stuid,hwid,score} = fields
-            const resultFile = files.resultFile && files.resultFile.name
-            const validation = await _this.util.validaRequiredFields({stuid,hwid,score})
+            const {stuid,hwid,score,state,comments} = fields
+            const resultFile = files.resultFile && files.resultFile.name || ''
+            const validation = await _this.util.validaRequiredFields({stuid,hwid,state,score})
             if(validation !== true){
                 return res.send(validation)
             }
@@ -122,7 +136,6 @@ class ScoreController{
             let stuFile = ''
             if(oldItem.length){
                 stuFile = oldItem[0].stuFile
-                console.log(oldItem[0].resultFile)
                 if(oldItem[0].resultFile){
                     fs.unlink(oldItem[0].resultFile,function(err){
                         if(err){
@@ -136,17 +149,16 @@ class ScoreController{
                 const uploadDir = path.join(__dirname, '../upload/correct/'+fname);
                 fs.rename(files.resultFile.path, uploadDir , async function(err){
                     if(err){
-                        console.log(err)
                         return res.send({success: false, msg: '文件上传失败'})
                     }
-                    const result = await _this.scoreService.update({stuid,hwid,score,resultFile:uploadDir,stuFile})
+                    const result = await _this.scoreService.update({stuid,hwid,score,state,comments,resultFile:uploadDir,stuFile})
                     if(result.errors){
                         return res.send({success: false, error: result.errors}) 
                     }
                     return res.send({success: true, msg: '更新成功'})
                 })
             } else{
-                const result = await _this.scoreService.update({stuid,hwid,score,resultFile,stuFile})
+                const result = await _this.scoreService.update({stuid,hwid,score,state,comments,resultFile,stuFile})
                 if(result.errors){
                     return res.send({success: false, error: result.errors}) 
                 }

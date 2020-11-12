@@ -8,7 +8,6 @@ class HomeworkService{
         try {
             result = await Homework.findAll()
         } catch(error){
-            console.log('error-->',error)
             return error
         }
         return result
@@ -76,7 +75,6 @@ class HomeworkService{
                 }
             })
         } catch (error) {
-            console.log('error--',error)
             return error
         }
         return result

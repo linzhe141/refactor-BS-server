@@ -8,7 +8,6 @@ class CourseService{
         try {
             result = await Course.findAll()
         } catch(error){
-            console.log('error-->',error)
             return error
         }
         return result
@@ -72,7 +71,6 @@ class CourseService{
                 }
             })
         } catch (error) {
-            console.log('error--',error)
             return error
         }
         return result

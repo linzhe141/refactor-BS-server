@@ -8,7 +8,6 @@ class TeachGradeMappingService{
         try {
             result = await TeachGradeMapping.findAll()
         } catch(error){
-            console.log('error-->',error)
             return error
         }
         return result
@@ -70,7 +69,6 @@ class TeachGradeMappingService{
                 }
             })
         } catch (error) {
-            console.log('error--',error)
             return error
         }
         return result

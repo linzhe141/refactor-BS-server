@@ -8,7 +8,6 @@ class StudentService{
         try {
             result = await student.findAll()
         } catch(error){
-            console.log('error-->',error)
             return error
         }
         return result
@@ -80,7 +79,6 @@ class StudentService{
                 }
             })
         } catch (error) {
-            console.log('error--',error)
             return error
         }
         return result

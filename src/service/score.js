@@ -8,18 +8,16 @@ class ScoreService{
         try {
             result = await Score.findAll()
         } catch(error){
-            console.log('error-->',error)
             return error
         }
         return result
     }
 
-    async create({stuid,hwid,score,resultFile,stuFile}){
-        console.log('Create---->')
+    async create({stuid,hwid,score,state,comments,resultFile,stuFile}){
         if(stuid && hwid){
             let result
             try { 
-                result = await Score.create({stuid,hwid,score,resultFile,stuFile})
+                result = await Score.create({stuid,hwid,score,state,comments,resultFile,stuFile})
             } catch(error){
                 return error
             }
@@ -49,11 +47,11 @@ class ScoreService{
         }
     }
 
-    async update({stuid, hwid, score, resultFile, stuFile}){
+    async update({stuid, hwid, score,state,comments, resultFile, stuFile}){
         let result
         try {
             result = await Score.update({
-                score, resultFile,stuFile
+                score, resultFile,stuFile,state,comments
             },
             {
                 where: {stuid, hwid}
@@ -73,7 +71,6 @@ class ScoreService{
                 }
             })
         } catch (error) {
-            console.log('error--',error)
             return error
         }
         return result
@@ -88,7 +85,6 @@ class ScoreService{
                 }
             })
         } catch (error) {
-            console.log('error--',error)
             return error
         }
         return result
@@ -103,7 +99,6 @@ class ScoreService{
                 }
             })
         } catch (error) {
-            console.log('error--',error)
             return error
         }
         return result

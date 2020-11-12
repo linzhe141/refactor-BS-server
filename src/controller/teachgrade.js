@@ -62,11 +62,8 @@ class TeachgradeController{
      */
     find = async(req, res) => {
         let {tchId,classgradeId} = req.query
-        console.log(req.query)
         tchId = tchId || ''
         classgradeId = classgradeId || ''
-        console.log('tchId--->',tchId)
-        console.log('classgradeId--->',classgradeId)
         const result = await this.teachgradeService.find({tchId,classgradeId})
         if(result.errors){
             return res.send({success: false, error: result.errors})
@@ -74,15 +71,12 @@ class TeachgradeController{
         const data = []
         for(let item of result){
             const value = (await this.classgradeService.find({id:item.classgradeId}))[0] 
-            console.log(value.id,value.classNum,value.className)  
             data.push({
                 id:value.id,
                 classNum: value.classNum,
                 className: value.className,
             }) 
         }
-        console.log('data--->',data)
-        
         return res.send({success: true, data: data})
     }
 

@@ -12,7 +12,9 @@ var Score = sequelize.define('score', {
         allowNull: false, //非空
         primaryKey: true //主键
     },
+    state: Sequelize.INTEGER,
     score: Sequelize.STRING(50),
+    comments: Sequelize.STRING(250),
     resultFile: Sequelize.STRING(250),
     stuFile: Sequelize.STRING(250),
 }, {

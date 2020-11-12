@@ -72,7 +72,6 @@ class HomeworkController{
                 const uploadDir = path.join(__dirname, '../upload/homework/'+fname);
                 fs.rename(files.hwFile.path, uploadDir , async function(err){
                     if(err){
-                        console.log(err)
                         return res.send({success: false, msg: '文件上传失败'})
                     }
                     const newHomework = await _this.homeworkService.create({hwName,hwDesc,endDate,teacherId, type,hwFile:uploadDir})
@@ -84,14 +83,14 @@ class HomeworkController{
                         const hwid = newHomework.id
                         const stuArr = await _this.studentService.find({classgradeId})
                         await stuArr.forEach(async function(item) {
-                            await _this.scoreService.create({stuid:item.id,hwid,score:'',resultFile:'',stuFile: ''})
+                            await _this.scoreService.create({stuid:item.id,hwid,score:'',state: 0,comments: '',resultFile:'',stuFile: ''})
                         })
                     }
                     // 学生为单位
                     if(type == 2){
                         const hwid = newHomework.id
                         await stuList.forEach(async function(item) {
-                            await _this.scoreService.create({stuid:item,hwid,score:'',resultFile:'',stuFile:''})
+                            await _this.scoreService.create({stuid:item,hwid,score:'',state: 0,comments: '',resultFile:'',stuFile:''})
                         })
                     }
                     return res.send({success: true, data: newHomework})
@@ -139,9 +138,7 @@ class HomeworkController{
         endDate = endDate || ''
         type = type || ''
         teacherId = teacherId || ''
-        console.log('params--->',{id,hwName,endDate, type, teacherId})
         const result = await this.homeworkService.find({id,hwName,endDate, type, teacherId})
-        console.log('result------->\n',result)
         if(result.errors){
             return res.send({success: false, error: result.errors})
         }
@@ -179,15 +176,12 @@ class HomeworkController{
                 return res.send({success: false, msg: '请先创建教师'})
             }
             const oldFile = await _this.homeworkService.find({id})
-            console.log('fdsadfsa',oldFile[0].hwFile)
-            console.log('fdsadfsa',oldFile.length && oldFile[0].hwFile)
             if(oldFile.length && oldFile[0].hwFile){
                 const oldFileItem = oldFile[0].hwFile
                 fs.unlink(oldFileItem,function(err){
                     if(err){
                         return res.send({success: false, msg: '更新作业失败'})
                     }
-                    console.log('删除成功')
                 })
             }
             const oldScore = await _this.scoreService.find({hwid:id})
@@ -211,13 +205,11 @@ class HomeworkController{
                 await _this.scoreService.deleteByHwid({hwid: id})
             }
             const hwFile = files.hwFile && files.hwFile.name || ''
-            console.log('hwFile---->',hwFile)
             if(hwFile){
                 const fname = (new Date()).getTime() + '-' + hwFile
                 const uploadDir = path.join(__dirname, '../upload/homework/'+fname);
                 fs.rename(files.hwFile.path, uploadDir , async function(err){
                     if(err){
-                        console.log(err)
                         return res.send({success: false, msg: '文件上传失败'})
                     }
                     const result = await _this.homeworkService.update({id,hwName,hwDesc,endDate,teacherId,type,hwFile:uploadDir})
