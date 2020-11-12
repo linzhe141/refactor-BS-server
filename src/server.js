@@ -88,21 +88,21 @@ let options = {
 }
 expressSwagger(options)
 async function serverStart() {
-    server.use(async function(req, res, next) {
-        if (req.url != '/api/user/login') {
-            let token = req.headers.token;
-            const utilTool = await util()
-            let result = await utilTool.verifyToken(token);
-            if (result == 'err') {
-                res.send({status: 403, msg: '登录已过期,请重新登录'});
-            } else {
-                next();
-            }
-        } else {
-            next();
-        }
+    // server.use(async function(req, res, next) {
+    //     if (req.url != '/api/user/login') {
+    //         let token = req.headers.token;
+    //         const utilTool = await util()
+    //         let result = await utilTool.verifyToken(token);
+    //         if (result == 'err') {
+    //             res.send({status: 403, msg: '登录已过期,请重新登录'});
+    //         } else {
+    //             next();
+    //         }
+    //     } else {
+    //         next();
+    //     }
     
-    })
+    // })
     server.use(await initControllers());
     server.listen(port)
     console.log(`> Started on port ${port}`)

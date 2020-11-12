@@ -57,8 +57,12 @@ class StudentController{
         const password = stuNum
         const permissions = 2
         const newUser = await this.userService.create({username, password, permissions})
-        
         const newStudent = await newUser.createStudent({stuNum,stuName,stuAge,stuGender,classgradeId})
+        // console.log('---------------------------------------------------------------------------')
+        // console.log('newStudent--->',newStudent)
+        // console.log('---------------------------------------------------------------------------')
+        // const stuOrtchNum = newStudent
+        
         if(newStudent.errors){
             return res.send({success: false, error: newStudent.errors}) 
         }

@@ -42,8 +42,26 @@ class UserController{
         if(result.length == 0){
             return res.send({success: false, msg: '账号或者密码错误'})
         }
+        console.log('result--->',result[0].permissions == 2)
+        let stuOrtchNum
+        if(result[0].permissions == 1){
+            return 
+        } else if(result[0].permissions == 2){
+            const stuUser = (await this.studentService.find({stuNum:username}))[0]
+            console.log('stuUser--->',stuUser.id)
+            stuOrtchNum = stuUser.id 
+        }
+        const data =  []
+        result.forEach(item=>{
+            data.push({
+                id: item.id,
+                username: item.username,
+                password: item.password,
+                permissions: item.permissions,
+                stuOrtchNum})
+        })
         let token = await this.util.generateToken(username)
-        return res.send({success: true, data: result, token: token})
+        return res.send({success: true, data: data, token: token})
     }
 
     /**

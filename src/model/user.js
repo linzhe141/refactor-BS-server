@@ -9,6 +9,7 @@ var User = sequelize.define('users', {
         primaryKey: true //主键
     },
     username: Sequelize.STRING(50),
+    // stuOrtchNum: Sequelize.INTEGER,
     password: Sequelize.STRING(50),
     permissions: Sequelize.BIGINT(50),
 }, {
