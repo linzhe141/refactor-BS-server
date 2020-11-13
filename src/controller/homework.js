@@ -3,6 +3,8 @@ const homeworkService = require('../service/homework')
 const teacherService = require('../service/teacher')
 const scoreService = require('../service/score')
 const studentService = require('../service/student')
+const courseService = require('../service/course')
+
 const fs = require('fs')
 const path = require('path')
 var util = require('../util')
@@ -15,6 +17,7 @@ class HomeworkController{
         this.teacherService = await teacherService()
         this.scoreService = await scoreService()
         this.studentService = await studentService()
+        this.courseService = await courseService()
         this.util = await util()
         const router = Router()
         router.get('/homeworkList',this.homeworkList)
@@ -57,8 +60,9 @@ class HomeworkController{
         form.parse(req, async function (err, fields, files) {
             const {hwName,hwDesc,endDate,type,teacherId} = fields
             let {stuList, classgradeId} = fields
+            console.log('classgradeId--->',classgradeId)
             stuList = stuList && JSON.parse(stuList) || []
-            const validation = await _this.util.validaRequiredFields({hwName,endDate,teacherId,type})
+            const validation = await _this.util.validaRequiredFields({hwName,endDate,teacherId,type,classgradeId})
             if(validation !== true){
                 return res.send(validation)
             }
@@ -66,7 +70,7 @@ class HomeworkController{
             if(teacherItem.length == 0){
                 return res.send({success: false, msg: '请先创建教师'})
             }
-            const hwFile = files.hwFile.name
+            const hwFile = files.hwFile && files.hwFile.name ||  ''
             if(hwFile){
                 const fname = (new Date()).getTime() + '-' + hwFile
                 const uploadDir = path.join(__dirname, '../upload/homework/'+fname);
@@ -74,7 +78,7 @@ class HomeworkController{
                     if(err){
                         return res.send({success: false, msg: '文件上传失败'})
                     }
-                    const newHomework = await _this.homeworkService.create({hwName,hwDesc,endDate,teacherId, type,hwFile:uploadDir})
+                    const newHomework = await _this.homeworkService.create({hwName,hwDesc,endDate,teacherId,classgradeId, type,hwFile:uploadDir})
                     if(newHomework.errors){
                         return res.send({success: false, error: newHomework.errors}) 
                     }
@@ -96,7 +100,7 @@ class HomeworkController{
                     return res.send({success: true, data: newHomework})
                 })
             } else{
-                const newHomework = await _this.homeworkService.create({hwName,hwDesc,endDate,type,teacherId,hwFile:''})
+                const newHomework = await _this.homeworkService.create({hwName,hwDesc,endDate,type,teacherId,classgradeId,hwFile:''})
                 if(newHomework.errors){
                     return res.send({success: false, error: newHomework.errors}) 
                 }
@@ -128,21 +132,35 @@ class HomeworkController{
      * @param {Number} id.query - 请输入作业id
      * @param {string} hwName.query - 请输入作业名
      * @param {string} endDate.query - 请输入截止日期
-     * @param {Number} type.formData - 请上传作业类型 1:学生为单位;2:班级为单位
+     * @param {Number} type.query - 请上传作业类型 1:学生为单位;2:班级为单位
      * @param {Number} teacherId.query - 请输入教师id
+     * @param {Number} classgradeId.query - 请输入班级id
      */
     find = async(req, res) => {
-        let {id,hwName,endDate,type,teacherId} = req.query
+        let {id,hwName,endDate,type,teacherId,classgradeId} = req.query
         id = id || ''
         hwName = hwName || ''
         endDate = endDate || ''
         type = type || ''
         teacherId = teacherId || ''
-        const result = await this.homeworkService.find({id,hwName,endDate, type, teacherId})
+        classgradeId = classgradeId || ''
+        const result = await this.homeworkService.find({id,hwName,endDate, type, teacherId,classgradeId})
         if(result.errors){
             return res.send({success: false, error: result.errors})
         }
-        return res.send({success: true, data: result})
+        const data = []
+        for(let item of result){
+            const courseId = (await this.teacherService.find({id:item.teacherId}))[0].courseId
+            const courseName = (await this.courseService.find({id:courseId}))[0].courseName
+            data.push({
+                id: item.id,
+                hwName: item.hwName,
+                hwDesc: item.hwDesc,
+                endDate: item.endDate,
+                courseName,
+            })
+        }
+        return res.send({success: true, data})
     }
 
     /**
@@ -160,6 +178,8 @@ class HomeworkController{
      * @param {string} endDate.formData - 请输入截止日期
      * @param {file} hwFile.formData - 请上传作业文件
      */
+
+     // TODO 前端未实现为学生布置作业功能
     updateHomework = async(req, res) => {
         const form = new formidable.IncomingForm()
         const _this = this
@@ -212,7 +232,7 @@ class HomeworkController{
                     if(err){
                         return res.send({success: false, msg: '文件上传失败'})
                     }
-                    const result = await _this.homeworkService.update({id,hwName,hwDesc,endDate,teacherId,type,hwFile:uploadDir})
+                    const result = await _this.homeworkService.update({id,hwName,hwDesc,endDate,teacherId,classgradeId,type,hwFile:uploadDir})
                     if(result.errors){
                         return res.send({success: false, error: result.errors}) 
                     }
@@ -233,7 +253,7 @@ class HomeworkController{
                     }
                 })
             } else {
-                const result = await _this.homeworkService.update({id,hwName,hwDesc,endDate,teacherId,type,hwFile:''})
+                const result = await _this.homeworkService.update({id,hwName,hwDesc,endDate,teacherId,classgradeId,type,hwFile:''})
                 if(result.errors){
                     return res.send({success: false, error: result.errors}) 
                 }

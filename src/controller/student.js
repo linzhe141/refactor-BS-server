@@ -66,7 +66,6 @@ class StudentController{
         if(newStudent.errors){
             return res.send({success: false, error: newStudent.errors}) 
         }
-        
         return res.send({success: true, data: newStudent})
     }
 

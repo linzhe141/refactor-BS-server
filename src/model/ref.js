@@ -30,6 +30,9 @@ Teacher.belongsTo(Course)
 Teacher.hasMany(Homework)
 Homework.belongsTo(Teacher)
 
+Classgrade.hasMany(Homework)
+Homework.belongsTo(Classgrade)
+
 // 多对多
 Classgrade.belongsToMany(Teacher,{
     through: TeachGradeMappling,

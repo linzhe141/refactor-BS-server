@@ -1,6 +1,10 @@
 const { Router } = require('express')
 const scoreService = require('../service/score')
 const studentService = require('../service/student')
+const homeworkService = require('../service/homework')
+const teacherService = require('../service/teacher')
+const courseService = require('../service/course')
+
 var util = require('../util')
 const formidable = require('formidable')
 const fs = require('fs')
@@ -10,6 +14,9 @@ class ScoreController{
     async init(){
         this.scoreService = await scoreService()
         this.studentService = await studentService()
+        this.homeworkService = await homeworkService()
+        this.teacherService = await teacherService()
+        this.courseService = await courseService()
         this.util = await util()
         const router = Router()
         router.get('/scoreList',this.scoreList)
@@ -33,7 +40,7 @@ class ScoreController{
     
     /**
      * 查找成绩
-     * @route GET /api/score/
+     * @route GET /api/ /
      * @summary 查找成绩
      * @group score - 成绩管理模块
      * @param {Number} stuid.query - 请输入学生id
@@ -52,12 +59,27 @@ class ScoreController{
         const data = []
         for(let item of result){
             const value = (await this.studentService.find({id:item.stuid}))[0]
+            const teacherId = (await this.homeworkService.find({id:item.hwid}))[0].teacherId
+            const hwName = (await this.homeworkService.find({id:item.hwid}))[0].hwName
+            const hwDesc = (await this.homeworkService.find({id:item.hwid}))[0].hwDesc
+            const endDate = (await this.homeworkService.find({id:item.hwid}))[0].endDate
+            const hwFile = (await this.homeworkService.find({id:item.hwid}))[0].hwFile
+
+            const courseId = (await this.teacherService.find({id:teacherId}))[0].courseId
+            const courseName = (await this.courseService.find({id:courseId}))[0].courseName
             data.push({
                 stuName: value.stuName,
                 stuid: item.stuid,
+                courseName,
                 state: item.state,  
                 score: item.score,
-                comments: item.comments
+                comments: item.comments,
+                hwName,
+                hwDesc,
+                endDate,
+                hwFile,
+                resultFile: item.resultFile,
+                stuFile: item.stuFile
             })
         }
         return res.send({success: true, data: data})

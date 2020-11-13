@@ -1,6 +1,8 @@
 const { Router } = require('express')
 const userService = require('../service/user')
 const teacherService = require('../service/teacher')
+const courseService = require('../service/course')
+
 var util = require('../util')
 
 class TeacherController{
@@ -8,6 +10,7 @@ class TeacherController{
     async init(){
         this.teacherService = await teacherService()
         this.userService = await userService()
+        this.courseService = await courseService()
         this.util = await util()
         const router = Router()
         router.get('/teacherList',this.teacherList)
@@ -82,7 +85,22 @@ class TeacherController{
         if(result.errors){
             return res.send({success: false, error: result.errors})
         }
-        return res.send({success: true, data: result})
+        const courseName = (await this.courseService.find({id:result[0].courseId}))[0].courseName
+        const data = []
+        result.forEach(item=>{
+            console.log(item)
+            data.push({
+                id:item.id,
+                tchAge:item.tchAge,
+                tchGender:item.tchGender,
+                tchName:item.tchName,
+                tchNum:item.tchNum,
+                userId:item.userId,
+                courseId:item.courseId,
+                courseName
+            })
+        })
+        return res.send({success: true, data})
     }
 
     /**

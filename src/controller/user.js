@@ -2,6 +2,7 @@ const { Router } = require('express')
 const userService = require('../service/user')
 const studentService = require('../service/student')
 const teacherService = require('../service/teacher')
+const classgradeService = require('../service/classgrade')
 
 const util = require('../util')
 
@@ -11,6 +12,7 @@ class UserController{
         this.userService = await userService()
         this.studentService = await studentService()
         this.teacherService = await teacherService()
+        this.classgradeService = await classgradeService()
         this.util = await util()
 
         const router = Router()
@@ -44,21 +46,30 @@ class UserController{
         }
         console.log('result--->',result[0].permissions == 2)
         let stuOrtchNum
+        let stuOrtchName
+        let className
+        let classgradeId
         if(result[0].permissions == 1){
-            return 
+            console.log(result)
+            // return 
         } else if(result[0].permissions == 2){
             const stuUser = (await this.studentService.find({stuNum:username}))[0]
             console.log('stuUser--->',stuUser.id)
+            className =(await this.classgradeService.find({id:stuUser.classgradeId}))[0].className
             stuOrtchNum = stuUser.id 
+            stuOrtchName = stuUser.stuName 
+            classgradeId = stuUser.classgradeId 
         }
         const data =  []
         result.forEach(item=>{
             data.push({
                 id: item.id,
                 username: item.username,
-                password: item.password,
                 permissions: item.permissions,
-                stuOrtchNum})
+                stuOrtchNum,
+                stuOrtchName,
+                className,
+                classgradeId            })
         })
         let token = await this.util.generateToken(username)
         return res.send({success: true, data: data, token: token})
