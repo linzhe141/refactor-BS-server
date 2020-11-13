@@ -58,9 +58,9 @@ Student.belongsToMany(Homework,{
 /* 创建默认数据 */
 
 // sequelize.sync({force: true}).then(()=>{
-//     defaultUser()
+//     defaultData()
 // })      
-const defaultUser = async ()=>{
+const defaultData = async ()=>{
     await User.create({username: 'root', password: 'linzhe141', permissions: 0})
     await User.create({username: 'admin', password: 'root', permissions: 0})
 

@@ -50,7 +50,7 @@ class UserController{
         let className
         let classgradeId
         if(result[0].permissions == 1){
-            console.log(result)
+            console.log('教师')
             // return 
         } else if(result[0].permissions == 2){
             const stuUser = (await this.studentService.find({stuNum:username}))[0]
