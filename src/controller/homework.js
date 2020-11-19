@@ -25,6 +25,7 @@ class HomeworkController{
         router.get('/',this.find)
         router.put('/',this.updateHomework)
         router.delete('/',this.deleteHomework)
+        router.post('/download',this.download)
         
         return router
     }
@@ -320,6 +321,29 @@ class HomeworkController{
         } else {
             return res.send({success: false, msg: '已删除'})
         }
+    }
+
+    /**
+     * 下载作业附件
+     * @route POST /api/homework/download
+     * @summary 下载作业附件
+     * @group homework - 作业管理模块
+     * @param {string} stuid.formData - 请输入学生作业名
+     */
+    download = async(req, res) => {
+        const {filename} = req.body
+        const file = path.join(__dirname, '../upload/homework/'+filename);
+        res.writeHead(200, {
+            'Content-Type': 'application/octet-stream',
+            'Content-Disposition': 'attachment; filename=' + encodeURI(filename),
+        });
+        var readStream = fs.createReadStream(file);
+        readStream.on('data', (chunk) => {
+            res.write(chunk, 'binary');
+        });
+        readStream.on('end', () => {
+            res.end();
+        })
     }
 }
 module.exports = async () => {

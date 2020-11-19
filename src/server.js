@@ -103,6 +103,20 @@ async function serverStart() {
     //     }
     
     // })
+    server.get('/public/images/student/:name',function(req,res){
+        res.header("Access-Control-Allow-Origin", "*")
+        res.header('Access-Control-Allow-Headers', 'Content-type')
+        res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS,PATCH")
+        res.header('Access-Control-Max-Age',1728000)
+        res.sendFile(__dirname +'/upload/completion/'+req.params.name)
+    })
+    server.get('/public/images/teacher/:name',function(req,res){
+        res.header("Access-Control-Allow-Origin", "*")
+        res.header('Access-Control-Allow-Headers', 'Content-type')
+        res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS,PATCH")
+        res.header('Access-Control-Max-Age',1728000)
+        res.sendFile(__dirname +'/upload/correct/'+req.params.name)
+    })
     server.use(await initControllers());
     server.listen(port)
     console.log(`> Started on port ${port}`)

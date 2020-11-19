@@ -23,6 +23,8 @@ class ScoreController{
         router.get('/',this.find)
         router.put('/upload',this.upload)
         router.put('/correct',this.correct)
+        router.post('/download',this.download)
+        router.post('/downloadResultfile',this.downloadResultfile)
         return router
     }
     
@@ -149,7 +151,8 @@ class ScoreController{
         const _this = this
         form.parse(req, async function (err, fields, files) {
             const {stuid,hwid,score,state,comments} = fields
-            const resultFile = files.resultFile && files.resultFile.name || ''
+            console.log('resultFile---->',files)
+            const resultFile = files.resultFile && files.resultFile.name+'.png' || ''
             const validation = await _this.util.validaRequiredFields({stuid,hwid,state,score})
             if(validation !== true){
                 return res.send(validation)
@@ -186,6 +189,52 @@ class ScoreController{
                 }
                 return res.send({success: true, msg: '更新成功'})
             }
+        })
+    }
+
+    /**
+     * 下载学生作业
+     * @route POST /api/score/download
+     * @summary 下载学生作业
+     * @group score - 成绩管理模块
+     * @param {string} filename.formData - 请输入学生作业文件名
+     */
+    download = async(req, res) => {
+        const {filename} = req.body
+        const file = path.join(__dirname, '../upload/completion/'+filename);
+        res.writeHead(200, {
+            'Content-Type': 'application/octet-stream',
+            'Content-Disposition': 'attachment; filename=' + encodeURI(filename),
+        });
+        var readStream = fs.createReadStream(file);
+        readStream.on('data', (chunk) => {
+            res.write(chunk, 'binary');
+        });
+        readStream.on('end', () => {
+            res.end();
+        })
+    }
+
+    /**
+     * 下载批改结果作业
+     * @route POST /api/score/download
+     * @summary 下载批改结果作业
+     * @group score - 成绩管理模块
+     * @param {string} filename.formData - 请输入批改结果文件名
+     */
+    downloadResultfile = async(req, res) => {
+        const {filename} = req.body
+        const file = path.join(__dirname, '../upload/correct/'+filename);
+        res.writeHead(200, {
+            'Content-Type': 'application/octet-stream',
+            'Content-Disposition': 'attachment; filename=' + encodeURI(filename),
+        });
+        var readStream = fs.createReadStream(file);
+        readStream.on('data', (chunk) => {
+            res.write(chunk, 'binary');
+        });
+        readStream.on('end', () => {
+            res.end();
         })
     }
 }
