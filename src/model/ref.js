@@ -30,6 +30,9 @@ Teacher.belongsTo(Course)
 Teacher.hasMany(Homework)
 Homework.belongsTo(Teacher)
 
+Classgrade.hasMany(Homework)
+Homework.belongsTo(Classgrade)
+
 // 多对多
 Classgrade.belongsToMany(Teacher,{
     through: TeachGradeMappling,
@@ -55,9 +58,9 @@ Student.belongsToMany(Homework,{
 /* 创建默认数据 */
 
 // sequelize.sync({force: true}).then(()=>{
-//     defaultUser()
+//     defaultData()
 // })      
-const defaultUser = async ()=>{
+const defaultData = async ()=>{
     await User.create({username: 'root', password: 'linzhe141', permissions: 0})
     await User.create({username: 'admin', password: 'root', permissions: 0})
 
@@ -86,9 +89,9 @@ const defaultUser = async ()=>{
     await TeachGradeMappling.create({tchId: 2, classgradeId: 2})
     await TeachGradeMappling.create({tchId: 3, classgradeId: 1})
 
-    await Student.create({stuNum: '160101', stuName: 'linzhe', stuAge: 18, stuGender: '男', classgradeId: 1,userId: 6})
-    await Student.create({stuNum: '160102', stuName: 'wangxx', stuAge: 18, stuGender: '男', classgradeId: 1,userId: 7})
-    await Student.create({stuNum: '160103', stuName: 'lixx', stuAge: 18, stuGender: '女', classgradeId: 1,userId: 8})
-    await Student.create({stuNum: '160201', stuName: 'zhangxx', stuAge: 18, stuGender: '男', classgradeId: 2,userId: 9})
-    await Student.create({stuNum: '160202', stuName: 'liuxx', stuAge: 18, stuGender: '女 ', classgradeId: 2,userId: 10})
+    await Student.create({stuNum: '160101', stuName: '淋着', stuAge: 18, stuGender: '男', classgradeId: 1,userId: 6})
+    await Student.create({stuNum: '160102', stuName: '王xx', stuAge: 18, stuGender: '男', classgradeId: 1,userId: 7})
+    await Student.create({stuNum: '160103', stuName: '李xx', stuAge: 18, stuGender: '女', classgradeId: 1,userId: 8})
+    await Student.create({stuNum: '160201', stuName: '张xx', stuAge: 18, stuGender: '男', classgradeId: 2,userId: 9})
+    await Student.create({stuNum: '160202', stuName: '刘xx', stuAge: 18, stuGender: '女 ', classgradeId: 2,userId: 10})
 }

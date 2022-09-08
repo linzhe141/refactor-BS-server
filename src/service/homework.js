@@ -8,17 +8,16 @@ class HomeworkService{
         try {
             result = await Homework.findAll()
         } catch(error){
-            console.log('error-->',error)
             return error
         }
         return result
     }
 
-    async create({hwName,hwDesc,endDate,hwFile,type,teacherId}){
+    async create({hwName,hwDesc,endDate,hwFile,type,teacherId,classgradeId}){
         if(hwName && endDate && teacherId){
             let result
             try { 
-                result = await Homework.create({hwName,hwDesc,endDate,hwFile, type, teacherId})
+                result = await Homework.create({hwName,hwDesc,endDate,hwFile, type, teacherId,classgradeId})
             } catch(error){
                 return error
             }
@@ -26,14 +25,15 @@ class HomeworkService{
         }
     }
 
-    async find({id,hwName,endDate, type, teacherId}){
+    async find({id,hwName,endDate, type, teacherId,classgradeId}){
         let result
-        if(id || hwName || endDate){
+        if(id || hwName || endDate || type || classgradeId){
             id = id || ''
             hwName = hwName || ''
             endDate = endDate || ''
             type = type || ''
             teacherId = teacherId || ''
+            classgradeId = classgradeId || ''
             try {
                 const params = {
                     id: {[Op.like]: `%${id}%`},
@@ -41,6 +41,7 @@ class HomeworkService{
                     endDate: {[Op.like]: `%${endDate}%`},
                     type: {[Op.like]: `%${type}%`},
                     teacherId: {[Op.like]: `%${teacherId}%`},
+                    classgradeId: {[Op.like]: `%${classgradeId}%`},
                 }
                 result = await Homework.findAll({
                     where: params
@@ -52,11 +53,11 @@ class HomeworkService{
         }
     }
 
-    async update({id,hwName,hwDesc,endDate,hwFile,type,teacherId}){
+    async update({id,hwName,hwDesc,endDate,hwFile,type,teacherId,classgradeId}){
         let result
         try {
             result = await Homework.update({
-                hwName,hwDesc,endDate,hwFile,type,teacherId
+                hwName,hwDesc,endDate,hwFile,type,teacherId,classgradeId
             },
             {
                 where: {id}
@@ -76,7 +77,6 @@ class HomeworkService{
                 }
             })
         } catch (error) {
-            console.log('error--',error)
             return error
         }
         return result

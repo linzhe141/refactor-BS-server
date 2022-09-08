@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const FileStreamRotator = require('file-stream-rotator')
 const fs = require('fs')
 const path = require('path')
+const util = require('./util')
 
 const initControllers = require('./controller/index.js');
 
@@ -34,7 +35,7 @@ fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
 const accessLogStream = FileStreamRotator.getStream({
     date_format: 'YYYYMMDD',
     filename: path.join(logDirectory, 'access-%DATE%.log'),
-    // frequency: 'daily',
+    // frequency: 'daily', 
     verbose: true
 })
 // 自定义token
@@ -87,6 +88,35 @@ let options = {
 }
 expressSwagger(options)
 async function serverStart() {
+    // server.use(async function(req, res, next) {
+    //     if (req.url != '/api/user/login') {
+    //         let token = req.headers.token;
+    //         const utilTool = await util()
+    //         let result = await utilTool.verifyToken(token);
+    //         if (result == 'err') {
+    //             res.send({status: 403, msg: '登录已过期,请重新登录'});
+    //         } else {
+    //             next();
+    //         }
+    //     } else {
+    //         next();
+    //     }
+    
+    // })
+    server.get('/public/images/student/:name',function(req,res){
+        res.header("Access-Control-Allow-Origin", "*")
+        res.header('Access-Control-Allow-Headers', 'Content-type')
+        res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS,PATCH")
+        res.header('Access-Control-Max-Age',1728000)
+        res.sendFile(__dirname +'/upload/completion/'+req.params.name)
+    })
+    server.get('/public/images/teacher/:name',function(req,res){
+        res.header("Access-Control-Allow-Origin", "*")
+        res.header('Access-Control-Allow-Headers', 'Content-type')
+        res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS,PATCH")
+        res.header('Access-Control-Max-Age',1728000)
+        res.sendFile(__dirname +'/upload/correct/'+req.params.name)
+    })
     server.use(await initControllers());
     server.listen(port)
     console.log(`> Started on port ${port}`)

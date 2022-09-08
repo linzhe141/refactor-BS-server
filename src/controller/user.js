@@ -2,6 +2,7 @@ const { Router } = require('express')
 const userService = require('../service/user')
 const studentService = require('../service/student')
 const teacherService = require('../service/teacher')
+const classgradeService = require('../service/classgrade')
 
 const util = require('../util')
 
@@ -11,6 +12,7 @@ class UserController{
         this.userService = await userService()
         this.studentService = await studentService()
         this.teacherService = await teacherService()
+        this.classgradeService = await classgradeService()
         this.util = await util()
 
         const router = Router()
@@ -42,8 +44,35 @@ class UserController{
         if(result.length == 0){
             return res.send({success: false, msg: '账号或者密码错误'})
         }
+        console.log('result--->',result[0].permissions == 2)
+        let stuOrtchNum
+        let stuOrtchName
+        let className
+        let classgradeId
+        if(result[0].permissions == 1){
+            console.log('教师')
+            // return 
+        } else if(result[0].permissions == 2){
+            const stuUser = (await this.studentService.find({stuNum:username}))[0]
+            console.log('stuUser--->',stuUser.id)
+            className =(await this.classgradeService.find({id:stuUser.classgradeId}))[0].className
+            stuOrtchNum = stuUser.id 
+            stuOrtchName = stuUser.stuName 
+            classgradeId = stuUser.classgradeId 
+        }
+        const data =  []
+        result.forEach(item=>{
+            data.push({
+                id: item.id,
+                username: item.username,
+                permissions: item.permissions,
+                stuOrtchNum,
+                stuOrtchName,
+                className,
+                classgradeId            })
+        })
         let token = await this.util.generateToken(username)
-        return res.send({success: true, data: result, token: token})
+        return res.send({success: true, data: data, token: token})
     }
 
     /**
@@ -170,7 +199,7 @@ class UserController{
 
     
 }
-module.exports = async () => {
+module.exports =    async () => {
     const c = new UserController();
     return await c.init();
 };

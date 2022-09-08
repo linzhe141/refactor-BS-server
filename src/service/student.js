@@ -8,7 +8,6 @@ class StudentService{
         try {
             result = await student.findAll()
         } catch(error){
-            console.log('error-->',error)
             return error
         }
         return result
@@ -35,6 +34,7 @@ class StudentService{
             stuAge = stuAge || ''
             stuGender = stuGender || ''
             userId = userId || ''
+            classgradeId = classgradeId || ''
             try {
                 const params = {
                     id: {[Op.like]: `%${id}%`},
@@ -79,7 +79,6 @@ class StudentService{
                 }
             })
         } catch (error) {
-            console.log('error--',error)
             return error
         }
         return result

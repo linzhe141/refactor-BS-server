@@ -9,7 +9,6 @@ class UserService{
             try {
                 result = await User.create({username,password,permissions})
             }catch(error){
-                console.log('error--1231',error)
                 return error
             }
             return result
@@ -34,7 +33,6 @@ class UserService{
                     where: params
                 })
             } catch (error) {
-                console.log('error-->',error)
                 return error
             }
         }
@@ -46,7 +44,6 @@ class UserService{
         try {
             result = await User.findAll()
         } catch(error){
-            console.log('error-->',error)
             return error
         }
         return result
@@ -57,7 +54,6 @@ class UserService{
         try {
             result = await this.find({username, password})
         } catch (error) {
-            console.log('error-->',error)
             return error
         }
         return result
@@ -72,7 +68,6 @@ class UserService{
                 }
             })
         } catch (error) {
-            console.log('error--',error)
             return error
         }
         return result
@@ -87,7 +82,6 @@ class UserService{
                 }
             })
         } catch (error) {
-            console.log('error--',error)
             return error
         }
         return result

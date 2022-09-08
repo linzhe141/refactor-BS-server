@@ -13,7 +13,6 @@ class TeacherService{
                 }
             })
         } catch(error){
-            console.log('error-->',error)
             return error
         }
         return result
@@ -85,7 +84,6 @@ class TeacherService{
                 }
             })
         } catch (error) {
-            console.log('error--',error)
             return error
         }
         return result

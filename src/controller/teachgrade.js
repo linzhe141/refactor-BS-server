@@ -1,11 +1,13 @@
 const { Router } = require('express')
 const teachgradeService = require('../service/teachgrade')
+const classgradeService = require('../service/classgrade')
 var util = require('../util')
 
 class TeachgradeController{
     // teachgradeService
     async init(){
         this.teachgradeService = await teachgradeService()
+        this.classgradeService = await classgradeService()
         this.util = await util()
         const router = Router()
         router.get('/teachgradeList',this.teachgradeList)
@@ -66,7 +68,16 @@ class TeachgradeController{
         if(result.errors){
             return res.send({success: false, error: result.errors})
         }
-        return res.send({success: true, data: result})
+        const data = []
+        for(let item of result){
+            const value = (await this.classgradeService.find({id:item.classgradeId}))[0] 
+            data.push({
+                id:value.id,
+                classNum: value.classNum,
+                className: value.className,
+            }) 
+        }
+        return res.send({success: true, data: data})
     }
 
     /**

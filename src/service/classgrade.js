@@ -8,7 +8,6 @@ class ClassgradeService{
         try {
             result = await Classgrade.findAll()
         } catch(error){
-            console.log('error-->',error)
             return error
         }
         return result
@@ -72,7 +71,6 @@ class ClassgradeService{
                 }
             })
         } catch (error) {
-            console.log('error--',error)
             return error
         }
         return result
